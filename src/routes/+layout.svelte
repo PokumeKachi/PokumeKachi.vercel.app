@@ -1,4 +1,5 @@
 <script lang="ts">
+    import '@picocss/pico/css/pico.css';
 	import './layout.css';
 	import favicon from '$lib/assets/favicon.svg';
 
