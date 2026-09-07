@@ -16,6 +16,7 @@
                     ];
                     tools = with pkgs; [
                         nodejs_24
+                        pnpm
                     ];
                     common = {
                         buildInputs = libs;
