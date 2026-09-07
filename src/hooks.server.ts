@@ -1,16 +1,13 @@
-import { handleScriptRoute } from "$lib/server/route-handlers";
+import type { Handle } from "@sveltejs/kit";
+import { handleCliClient } from "$lib/server/route-handlers";
 
-/** @type {import('@sveltejs/kit').Handle} */
+export const handle: Handle = async ({ event, resolve }) => {
+	const userAgent = event.request.headers.get("user-agent") ?? "";
+	const isCliClient = /curl|wget|httpie|libcurl/i.test(userAgent);
 
-export async function handle({ event, resolve }) {
-    const url = event.url.pathname;
-    const userAgent = event.request.headers.get("user-agent") || "";
-    const isCurl = /curl|wget|httpie|libcurl/i.test(userAgent);
+	if (isCliClient) {
+		return handleCliClient({event, resolve});
+	}
 
-    if (url === "/" && isCurl) {
-        const result = handleScriptRoute(event);
-        if (result) return result;
-    }
-
-    return await resolve(event);
-}
+	return resolve(event);
+};
