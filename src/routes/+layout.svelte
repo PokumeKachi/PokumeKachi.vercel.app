@@ -15,8 +15,16 @@
 	const pageAnimation = {
 		enter: {
 			keyframes: [
-				{ transform: "scale(0)", opacity: 0, filter: "blur(16px)" },
-				{ transform: "scale(1)", opacity: 1, filter: "blur(0)" }
+				{
+					transform: "translateY(50vh)",
+					opacity: 0,
+					filter: "blur(16px)"
+				},
+				{
+					transform: "translateY(0)",
+					opacity: 1,
+					filter: "blur(0)"
+				}
 			],
 			options: {
 				duration: PAGE_TRANSITION_DURATION,
@@ -24,10 +32,19 @@
 				fill: "forwards" as FillMode
 			}
 		},
+
 		exit: {
 			keyframes: [
-				{ transform: "scale(1)", opacity: 1, filter: "blur(0)" },
-				{ transform: "scale(2)", opacity: 0, filter: "blur(16px)" }
+				{
+					transform: "translateY(0)",
+					opacity: 1,
+					filter: "blur(0)"
+				},
+				{
+					transform: "translateY(-50vh)",
+					opacity: 0,
+					filter: "blur(16px)"
+				}
 			],
 			options: {
 				duration: PAGE_TRANSITION_DURATION,
@@ -52,7 +69,10 @@
 	let { children } = $props();
 	let navigating = $state(false);
 
-	function animatePage(animation: typeof pageAnimation.enter, duration = animation.options.duration) {
+	function animatePage(
+		animation: typeof pageAnimation.enter,
+		duration = animation.options.duration
+	) {
 		const page = document.querySelector<HTMLElement>(".page");
 		if (!page) return;
 
