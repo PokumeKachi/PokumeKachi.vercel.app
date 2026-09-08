@@ -44,14 +44,9 @@
                 >
                     <a
                         {href}
-                        tabindex="-1"
                         class:active={activePath === href}
                         aria-current={activePath === href ? "page" : undefined}
-                        onclick={(event) => {
-                            navigate(href, event);
-                            // Remove focus immediately after click (mobile/desktop)
-                            event.currentTarget.blur();
-                        }}
+                        onclick={(event) => navigate(href, event)}
                     >
                         <em>{name}</em>
                     </a>
@@ -87,9 +82,6 @@
 
     .nav-links a {
         position: relative;
-        /* Remove focus ring and mobile tap highlight */
-        outline: none;
-        -webkit-tap-highlight-color: transparent;
     }
 
     .nav-links a::after {
