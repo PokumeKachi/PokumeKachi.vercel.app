@@ -18,6 +18,12 @@
 
         activePath = href;
     }
+
+    const links = [
+        ["Home", "/"],
+        ["Projects", "/projects"],
+        ["Contact", "/contact"]
+    ] as const;
 </script>
 
 <header
@@ -25,33 +31,63 @@
     style={`--transition-duration: ${PAGE_TRANSITION_DURATION * 2}ms`}
 >
     <nav>
-        <ul>
-            <li><h1>Pokume Kachi</h1></li>
+        <ul class="nav-title">
+            <li>
+                <h1>Pokume Kachi</h1>
+            </li>
         </ul>
 
-        <ul>
-            {#each [["Home", "/"], ["Projects", "/projects"], ["Contact", "/contact"]] as [name, href]}
-                <li>
-                    <a
-                        {href}
-                        class:active={activePath === href}
-                        aria-current={activePath === href ? "page" : undefined}
-                        onclick={(event) => navigate(href, event)}
+        <!-- Key the list so it re‑renders when the URL changes -->
+        {#key page.url.pathname}
+            <ul class="nav-links">
+                {#each links as [name, href], i}
+                    <li
+                        style={`animation-delay: ${(PAGE_TRANSITION_DURATION * 2) + i * (PAGE_TRANSITION_DURATION * 0.5)}ms`}
                     >
-                        <em>{name}</em>
-                    </a>
-                </li>
-            {/each}
-        </ul>
+                        <a
+                            {href}
+                            class:active={activePath === href}
+                            aria-current={activePath === href ? "page" : undefined}
+                            onclick={(event) => navigate(href, event)}
+                        >
+                            <em>{name}</em>
+                        </a>
+                    </li>
+                {/each}
+            </ul>
+        {/key}
     </nav>
 </header>
 
 <style>
-    nav ul:last-child a {
+    .nav-title > li {
+        animation: nav-enter var(--transition-duration)
+            cubic-bezier(0, 1, 0, 1) both;
+        animation-delay: 0ms;
+    }
+
+    .nav-links > li {
+        animation: nav-enter var(--transition-duration)
+            cubic-bezier(0, 1, 0, 1) both;
+    }
+
+    @keyframes nav-enter {
+        from {
+            opacity: 0;
+            transform: translateY(-0.75rem);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .nav-links a {
         position: relative;
     }
 
-    nav ul:last-child a::after {
+    .nav-links a::after {
         content: "";
         position: absolute;
         left: 0;
@@ -65,7 +101,7 @@
             cubic-bezier(0, 1, 0, 1);
     }
 
-    nav ul:last-child a.active::after {
+    .nav-links a.active::after {
         transform: scaleX(1);
     }
 
