@@ -2,18 +2,21 @@
 	import "@picocss/pico/css/pico.css";
 	import "./layout.css";
 
-	import { onNavigate } from "$app/navigation";
 	import { onMount } from "svelte";
+	import { onNavigate } from "$app/navigation";
 
-	import { PAGE_TRANSITION_DURATION } from "$lib/animation";
+	import {
+		PAGE_INTRODUCTION_DURATION,
+		PAGE_TRANSITION_DURATION
+	} from "$lib/animation";
 
 	import Header from "./header.svelte";
 
-	const PAGE_ANIMATION = {
+	const pageAnimation = {
 		enter: {
 			keyframes: [
 				{ transform: "scale(0)", opacity: 0, filter: "blur(16px)" },
-				{ transform: "scale(1)", opacity: 1, filter: "blur(0px)" }
+				{ transform: "scale(1)", opacity: 1, filter: "blur(0)" }
 			],
 			options: {
 				duration: PAGE_TRANSITION_DURATION,
@@ -23,7 +26,7 @@
 		},
 		exit: {
 			keyframes: [
-				{ transform: "scale(1)", opacity: 1, filter: "blur(0px)" },
+				{ transform: "scale(1)", opacity: 1, filter: "blur(0)" },
 				{ transform: "scale(2)", opacity: 0, filter: "blur(16px)" }
 			],
 			options: {
@@ -34,43 +37,50 @@
 		}
 	};
 
-	let { children } = $props();
+	const headerAnimation = {
+		keyframes: [
+			{ transform: "translateY(-100%)", opacity: 0 },
+			{ transform: "translateY(0)", opacity: 1 }
+		],
+		options: {
+			duration: PAGE_INTRODUCTION_DURATION,
+			easing: "cubic-bezier(0, 1, 0, 1)",
+			fill: "forwards" as FillMode
+		}
+	};
 
+	let { children } = $props();
 	let navigating = $state(false);
 
-	function enterPage() {
+	function animatePage(animation: typeof pageAnimation.enter, duration = animation.options.duration) {
 		const page = document.querySelector<HTMLElement>(".page");
 		if (!page) return;
 
 		page.getAnimations().forEach((a) => a.cancel());
 
-		page.animate(
-			PAGE_ANIMATION.enter.keyframes,
-			PAGE_ANIMATION.enter.options
-		);
+		return page.animate(animation.keyframes, {
+			...animation.options,
+			duration
+		});
 	}
 
 	onMount(() => {
-		enterPage();
+		animatePage(pageAnimation.enter, PAGE_INTRODUCTION_DURATION);
+
+		const header = document.querySelector<HTMLElement>("header");
+		header?.animate(headerAnimation.keyframes, headerAnimation.options);
 	});
 
 	onNavigate((navigation) => {
-		if (navigation.to?.url.pathname === navigation.from?.url.pathname)
-			return;
-
-		const page = document.querySelector<HTMLElement>(".page");
-		if (!page) return;
+		if (navigation.to?.url.pathname === navigation.from?.url.pathname) return;
 
 		navigating = true;
 
-		const exit = page.animate(
-			PAGE_ANIMATION.exit.keyframes,
-			PAGE_ANIMATION.exit.options
-		);
+		const exit = animatePage(pageAnimation.exit);
+		if (!exit) return;
 
 		return exit.finished.then(() => () => {
-			page.getAnimations().forEach((a) => a.cancel());
-			enterPage();
+			animatePage(pageAnimation.enter);
 			navigating = false;
 		});
 	});
@@ -82,16 +92,23 @@
 </svelte:head>
 
 <Header {navigating} />
+
 <div class="page">
 	{@render children()}
 </div>
 
 <style>
 	:global(html) {
-		overflow-x: hidden;
+		overflow: hidden auto;
+		scrollbar-width: none;
+	}
+
+	:global(html::-webkit-scrollbar) {
+		display: none;
 	}
 
 	.page {
-		width: 100%;
+		min-height: 100vh;
+		transform-origin: center;
 	}
 </style>

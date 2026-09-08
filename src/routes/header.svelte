@@ -29,7 +29,6 @@
 		<ul>
 			{#each [
 				["Home", "/"],
-				["Profile", "/profile"],
 				["Projects", "/projects"],
 				["Contact", "/contact"]
 			] as [name, href]}
