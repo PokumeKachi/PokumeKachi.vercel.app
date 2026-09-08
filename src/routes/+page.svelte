@@ -278,20 +278,6 @@
 
             <section>
                 <h3>
-                    A silly little Python encryption script for publishing your
-                    secrets online
-                    <small>(January 2026)</small>
-                </h3>
-
-                <p>
-                    <a href="https://github.com/PokumeKachi/freeapikeys">
-                        Open-sourced on GitHub.
-                    </a>
-                </p>
-            </section>
-
-            <section>
-                <h3>
                     A static portfolio website
                     <small>(February 2026)</small>
                 </h3>
