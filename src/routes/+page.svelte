@@ -6,37 +6,5 @@
     </p>
 
     <h1>Page currently up on Vercel!</h1>
-    <h1>Page currently up on Vercel!</h1>
-    <h1>Page currently up on Vercel!</h1>
-    <h1>Page currently up on Vercel!</h1>
-    <h1>Page currently up on Vercel!</h1>
-    <h1>Page currently up on Vercel!</h1>
-    <h1>Page currently up on Vercel!</h1>
-    <h1>Page currently up on Vercel!</h1>
-    <h1>Page currently up on Vercel!</h1>
-    <h1>Page currently up on Vercel!</h1>
-    <h1>Page currently up on Vercel!</h1>
-    <h1>Page currently up on Vercel!</h1>
-    <h1>Page currently up on Vercel!</h1>
-    <h1>Page currently up on Vercel!</h1>
-    <h1>Page currently up on Vercel!</h1>
-    <h1>Page currently up on Vercel!</h1>
-    <h1>Page currently up on Vercel!</h1>
-    <h1>Page currently up on Vercel!</h1>
-    <h1>Page currently up on Vercel!</h1>
-    <h1>Page currently up on Vercel!</h1>
-    <h1>Page currently up on Vercel!</h1>
-    <h1>Page currently up on Vercel!</h1>
-    <h1>Page currently up on Vercel!</h1>
-    <h1>Page currently up on Vercel!</h1>
-    <h1>Page currently up on Vercel!</h1>
-    <h1>Page currently up on Vercel!</h1>
-    <h1>Page currently up on Vercel!</h1>
-    <h1>Page currently up on Vercel!</h1>
-    <h1>Page currently up on Vercel!</h1>
-    <h1>Page currently up on Vercel!</h1>
-    <h1>Page currently up on Vercel!</h1>
-    <h1>Page currently up on Vercel!</h1>
-    <h1>Page currently up on Vercel!</h1>
     <a href="/profile">Profile</a>
 </main>
