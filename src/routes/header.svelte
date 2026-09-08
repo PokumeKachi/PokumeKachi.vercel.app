@@ -22,7 +22,7 @@
     const links = [
         ["Home", "/"],
         ["Projects", "/projects"],
-        ["Contact", "/contact"]
+        ["Contact", "/contact"],
     ] as const;
 </script>
 
@@ -38,37 +38,35 @@
         </ul>
 
         <!-- Key the list so it re‑renders when the URL changes -->
-        {#key page.url.pathname}
-            <ul class="nav-links">
-                {#each links as [name, href], i}
-                    <li
-                        style={`animation-delay: ${(PAGE_TRANSITION_DURATION * 2) + i * (PAGE_TRANSITION_DURATION * 0.5)}ms`}
+        <ul class="nav-links">
+            {#each links as [name, href], i}
+                <li
+                    style={`animation-delay: ${PAGE_TRANSITION_DURATION * 2 + i * (PAGE_TRANSITION_DURATION * 0.5)}ms`}
+                >
+                    <a
+                        {href}
+                        class:active={activePath === href}
+                        aria-current={activePath === href ? "page" : undefined}
+                        onclick={(event) => navigate(href, event)}
                     >
-                        <a
-                            {href}
-                            class:active={activePath === href}
-                            aria-current={activePath === href ? "page" : undefined}
-                            onclick={(event) => navigate(href, event)}
-                        >
-                            <em>{name}</em>
-                        </a>
-                    </li>
-                {/each}
-            </ul>
-        {/key}
+                        <em>{name}</em>
+                    </a>
+                </li>
+            {/each}
+        </ul>
     </nav>
 </header>
 
 <style>
     .nav-title > li {
-        animation: nav-enter var(--transition-duration)
-            cubic-bezier(0, 1, 0, 1) both;
+        animation: nav-enter var(--transition-duration) cubic-bezier(0, 1, 0, 1)
+            both;
         animation-delay: 0ms;
     }
 
     .nav-links > li {
-        animation: nav-enter var(--transition-duration)
-            cubic-bezier(0, 1, 0, 1) both;
+        animation: nav-enter var(--transition-duration) cubic-bezier(0, 1, 0, 1)
+            both;
     }
 
     @keyframes nav-enter {
