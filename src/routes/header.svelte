@@ -37,7 +37,6 @@
             </li>
         </ul>
 
-        <!-- Key the list so it re‑renders when the URL changes -->
         <ul class="nav-links">
             {#each links as [name, href], i}
                 <li
@@ -45,6 +44,7 @@
                 >
                     <a
                         {href}
+                        tabindex="-1"
                         class:active={activePath === href}
                         aria-current={activePath === href ? "page" : undefined}
                         onclick={(event) => navigate(href, event)}
