@@ -7,8 +7,10 @@
 </svelte:head>
 
 <main>
-    <section>
-        <h2 data-tooltip="Personal information">whoiam</h2>
+    <section id="whoiam">
+        <h2 data-tooltip="Personal information">
+            <a href="#whoiam">whoiam</a>
+        </h2>
 
         <table class="container">
             <tbody>
@@ -39,8 +41,10 @@
         </table>
     </section>
 
-    <section>
-        <h2 data-tooltip="Available skillset">whatido</h2>
+    <section id="whatido">
+        <h2 data-tooltip="Available skillset">
+            <a href="#whatido">whatido</a>
+        </h2>
 
         <section class="container">
             <h3>Languages</h3>
@@ -180,8 +184,10 @@
         </section>
     </section>
 
-    <section>
-        <h2 data-tooltip="Past projects">whatidid</h2>
+    <section id="whatidid">
+        <h2 data-tooltip="Past projects">
+            <a href="#whatidid">whatidid</a>
+        </h2>
 
         <section class="container">
             <section>
@@ -282,7 +288,11 @@
                     <small>(February 2026)</small>
                 </h3>
 
-                <p><em>Replaced by The website you are looking at right now.</em></p>
+                <p>
+                    <em
+                        >Replaced by The website you are looking at right now.</em
+                    >
+                </p>
 
                 <p>
                     Powered by
@@ -355,16 +365,22 @@
 </main>
 
 <style>
+    h2 a {
+        color: inherit;
+        text-decoration: none;
+        display: block;
+    }
+
     .lang-row {
         display: flex;
         flex-wrap: wrap;
         align-items: center;
-        gap: 2rem;
+        gap: clamp(1rem, 3vw, 2rem);
     }
 
     .lang-row a {
         display: block;
-        width: 160px;
+        width: clamp(64px, 15vw, 160px);
         aspect-ratio: 1;
     }
 
