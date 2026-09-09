@@ -77,8 +77,20 @@
 
 <style>
     header {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+
         padding-inline: 1rem;
-        z-index: 1;
+
+        background: color-mix(
+            in srgb,
+            var(--pico-background-color) 75%,
+            transparent
+        );
+
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
     }
 
     .nav-title > li {
