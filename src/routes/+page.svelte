@@ -191,10 +191,10 @@
 
         <section class="container">
             <section>
-                <h3>
+                <h4>
                     A bunch of Godot games
                     <small>(2022–2024)</small>
-                </h3>
+                </h4>
 
                 <ul>
                     <li>
@@ -234,11 +234,11 @@
             </section>
 
             <section>
-                <h3>
+                <h4>
                     A Lua script that generates a whole dictionary database from
                     a text file with a custom-made syntax
                     <small>(October–December 2024)</small>
-                </h3>
+                </h4>
 
                 <p>
                     <a href="https://github.com/PokumeKachi/the-dumpster">
@@ -248,12 +248,12 @@
             </section>
 
             <section>
-                <h3>
+                <h4>
                     Another Lua script that acts as a question bank, generating
                     test papers from a text file with even more custom-made
                     syntax
                     <small>(October–December 2024)</small>
-                </h3>
+                </h4>
 
                 <p>
                     <a href="https://github.com/PokumeKachi/mph">
@@ -263,10 +263,10 @@
             </section>
 
             <section>
-                <h3>
+                <h4>
                     An Arduino robot controller program
                     <small>(July 2025)</small>
-                </h3>
+                </h4>
 
                 <p>
                     Written for the
@@ -283,10 +283,10 @@
             </section>
 
             <section>
-                <h3>
+                <h4>
                     A static portfolio website
                     <small>(February 2026)</small>
-                </h3>
+                </h4>
 
                 <p>
                     <em
@@ -320,10 +320,10 @@
             </section>
 
             <section>
-                <h3>
+                <h4>
                     The website you are looking at right now
                     <small>(August 2026)</small>
-                </h3>
+                </h4>
 
                 <p>
                     Powered by
@@ -351,7 +351,7 @@
             </section>
 
             <section>
-                <h3>Linux <small>(2023–now)</small></h3>
+                <h4>Linux <small>(2023–now)</small></h4>
 
                 <ul>
                     <li>Debian (August 2023–December 2023)</li>
