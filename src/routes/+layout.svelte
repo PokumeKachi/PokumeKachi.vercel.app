@@ -113,7 +113,7 @@
             autoRaf: true,
         });
 
-        resolveLenis(lenis)
+        resolveLenis(lenis);
 
         animatePage(pageAnimation.enter, PAGE_INTRODUCTION_DURATION);
 
@@ -144,7 +144,11 @@
         header?.morphTitle(to ?? "/");
 
         const exit = animatePage(pageAnimation.exit);
-        if (!exit) return;
+
+        if (!exit) {
+            navigating = false;
+            return;
+        }
 
         return exit.finished.then(() => () => {
             animatePage(pageAnimation.enter);

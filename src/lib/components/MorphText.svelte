@@ -89,19 +89,6 @@
     });
 </script>
 
-<svelte:head>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link
-        rel="preconnect"
-        href="https://fonts.gstatic.com"
-        crossorigin="anonymous"
-    />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Figtree:wght@900&display=swap"
-        rel="stylesheet"
-    />
-</svelte:head>
-
 <svg width="0" height="0" aria-hidden="true">
     <defs>
         <filter id="morph-threshold">
