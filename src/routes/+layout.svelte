@@ -4,16 +4,24 @@
 
     import Lenis from "lenis";
 
-    import { onMount } from "svelte";
+    import { onMount, setContext } from "svelte";
     import { onNavigate } from "$app/navigation";
 
     import {
         PAGE_INTRODUCTION_DURATION,
         PAGE_TRANSITION_DURATION,
-        LENIS_LERP
+        LENIS_LERP,
     } from "$lib/animation";
 
     import Header from "./Header.svelte";
+
+    let resolveLenis: (lenis: Lenis) => void;
+
+    const lenisReady = new Promise<Lenis>((resolve) => {
+        resolveLenis = resolve;
+    });
+
+    setContext("lenis", lenisReady);
 
     const defaultPage = {
         transform: "translateY(0)",
@@ -104,6 +112,8 @@
             lerp: LENIS_LERP,
             autoRaf: true,
         });
+
+        resolveLenis(lenis)
 
         animatePage(pageAnimation.enter, PAGE_INTRODUCTION_DURATION);
 
