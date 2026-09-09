@@ -1,14 +1,32 @@
 <script lang="ts">
     import { page } from "$app/state";
     import { PAGE_TRANSITION_DURATION } from "$lib/animation";
+    import MorphText from "$lib/components/MorphText.svelte";
 
-    let { navigating } = $props();
+    const titles: Record<string, string> = {
+        "/": "Pokume Kachi",
+        "/projects": "Products, delivered",
+        "/contact": "Communication, simplified",
+        "/loimon": "The one true LMS solution",
+    };
+
+    let { navigating } = $props<{
+        navigating: boolean;
+    }>();
 
     let activePath = $state(page.url.pathname);
+
+    let morphText: {
+        morphTo: (text: string) => void;
+    };
 
     $effect(() => {
         activePath = page.url.pathname;
     });
+
+    export function morphTitle(pathname: string) {
+        morphText?.morphTo(titles[pathname] ?? "Pokume Kachi");
+    }
 
     function navigate(href: string, event: MouseEvent) {
         if (navigating) {
@@ -27,13 +45,16 @@
 </script>
 
 <header
-    class="container"
     style={`--transition-duration: ${PAGE_TRANSITION_DURATION * 2}ms`}
 >
     <nav>
         <ul class="nav-title">
             <li>
-                <h1>Pokume Kachi</h1>
+                <MorphText
+                    bind:this={morphText}
+                    text={titles[page.url.pathname] ?? "Pokume Kachi"}
+                    duration={PAGE_TRANSITION_DURATION}
+                />
             </li>
         </ul>
 
@@ -48,7 +69,7 @@
                         aria-current={activePath === href ? "page" : undefined}
                         onclick={(event) => navigate(href, event)}
                     >
-                        <em>{name}</em>
+                        {name}
                     </a>
                 </li>
             {/each}
@@ -60,7 +81,6 @@
     .nav-title > li {
         animation: nav-enter var(--transition-duration) cubic-bezier(0, 1, 0, 1)
             both;
-        animation-delay: 0ms;
     }
 
     .nav-links > li {
@@ -82,6 +102,8 @@
 
     .nav-links a {
         position: relative;
+        font-family: "Geist", sans-serif;
+        font-weight: 500;
     }
 
     .nav-links a::after {

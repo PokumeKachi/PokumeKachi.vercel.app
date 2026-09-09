@@ -19,7 +19,7 @@
 </script>
 
 <main class="container">
-    <ul>
+    <ul class="grid">
         {#each links as [name, icon, url]}
             <li>
                 <img src={icon} alt={name} />
@@ -55,5 +55,12 @@
     li:hover img {
         transform: scale(1.15) translateY(-0.2rem);
         filter: drop-shadow(0 0 0.5rem currentColor);
+    }
+
+    ul {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        padding: 0;
     }
 </style>

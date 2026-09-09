@@ -10,7 +10,7 @@
 		PAGE_TRANSITION_DURATION
 	} from "$lib/animation";
 
-	import Header from "./header.svelte";
+	import Header from "./Header.svelte";
 
 	const pageAnimation = {
 		enter: {
@@ -69,6 +69,10 @@
 	let { children } = $props();
 	let navigating = $state(false);
 
+	let header: {
+		morphTitle: (pathname: string) => void;
+	};
+
 	function animatePage(
 		animation: typeof pageAnimation.enter,
 		duration = animation.options.duration
@@ -85,16 +89,29 @@
 	}
 
 	onMount(() => {
-		animatePage(pageAnimation.enter, PAGE_INTRODUCTION_DURATION);
+		animatePage(
+			pageAnimation.enter,
+			PAGE_INTRODUCTION_DURATION
+		);
 
-		const header = document.querySelector<HTMLElement>("header");
-		header?.animate(headerAnimation.keyframes, headerAnimation.options);
+		const headerElement =
+			document.querySelector<HTMLElement>("header");
+
+		headerElement?.animate(
+			headerAnimation.keyframes,
+			headerAnimation.options
+		);
 	});
 
 	onNavigate((navigation) => {
-		if (navigation.to?.url.pathname === navigation.from?.url.pathname) return;
+		const from = navigation.from?.url.pathname;
+		const to = navigation.to?.url.pathname;
+
+		if (to === from) return;
 
 		navigating = true;
+
+		header?.morphTitle(to ?? "/");
 
 		const exit = animatePage(pageAnimation.exit);
 		if (!exit) return;
@@ -111,8 +128,7 @@
 	<link rel="icon" href="/favicon.ico" sizes="any" />
 </svelte:head>
 
-<Header {navigating} />
-
+<Header bind:this={header} {navigating} />
 <div class="page">
 	{@render children()}
 </div>
