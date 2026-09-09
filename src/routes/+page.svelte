@@ -1,10 +1,37 @@
-<svelte:head>
-    <title>Pokume Kachi</title>
-    <meta
-        name="description"
-        content="A concise introduction to Pokume Kachi."
-    />
-</svelte:head>
+<script lang="ts">
+    const languages = [
+        {
+            name: "C++",
+            url: "https://isocpp.org",
+            icon: "https://www.svgrepo.com/show/452183/cpp.svg",
+        },
+        {
+            name: "Rust",
+            url: "https://www.rust-lang.org",
+            icon: "https://www.svgrepo.com/show/473774/rust.svg",
+        },
+        {
+            name: "TypeScript",
+            url: "https://www.typescriptlang.org",
+            icon: "https://www.svgrepo.com/show/374146/typescript-official.svg",
+        },
+        {
+            name: "Python",
+            url: "https://www.python.org",
+            icon: "https://www.svgrepo.com/show/452091/python.svg",
+        },
+        {
+            name: "Lua",
+            url: "https://www.lua.org",
+            icon: "https://www.svgrepo.com/show/508927/lua02.svg",
+        },
+        {
+            name: "Dart",
+            url: "https://dart.dev",
+            icon: "https://www.svgrepo.com/show/353631/dart.svg",
+        },
+    ];
+</script>
 
 <main>
     <section id="whoiam">
@@ -50,48 +77,17 @@
             <h3>Languages</h3>
 
             <div class="lang-row">
-                <a href="https://isocpp.org">
-                    <img
-                        src="https://upload.wikimedia.org/wikipedia/commons/1/18/ISO_C%2B%2B_Logo.svg"
-                        alt="C++"
-                    />
-                </a>
-
-                <a href="https://www.rust-lang.org">
-                    <img
-                        class="rust"
-                        src="https://upload.wikimedia.org/wikipedia/commons/d/d5/Rust_programming_language_black_logo.svg"
-                        alt="Rust"
-                    />
-                </a>
-
-                <a href="https://www.typescriptlang.org">
-                    <img
-                        src="https://upload.wikimedia.org/wikipedia/commons/f/f5/Typescript.svg"
-                        alt="TypeScript"
-                    />
-                </a>
-
-                <a href="https://www.python.org">
-                    <img
-                        src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"
-                        alt="Python"
-                    />
-                </a>
-
-                <a href="https://www.lua.org">
-                    <img
-                        src="https://upload.wikimedia.org/wikipedia/commons/c/cf/Lua-Logo.svg"
-                        alt="Lua"
-                    />
-                </a>
-
-                <a href="https://dart.dev">
-                    <img
-                        src="https://dart.dev/assets/img/logo/dart-192.svg"
-                        alt="Dart"
-                    />
-                </a>
+                {#each languages as language}
+                    <li>
+                        <a href={language.url}>
+                            <img
+                                class="themed-image"
+                                src={language.icon}
+                                alt={language.name}
+                            />
+                        </a>
+                    </li>
+                {/each}
             </div>
         </section>
 
@@ -389,10 +385,5 @@
         width: 100%;
         height: 100%;
         object-fit: contain;
-    }
-
-    .lang-row img.rust {
-        filter: invert(43%) sepia(93%) saturate(1131%) hue-rotate(348deg)
-            brightness(102%) contrast(101%);
     }
 </style>

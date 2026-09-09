@@ -1,7 +1,37 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 @media (prefers-reduced-motion: no-preference) {
     html {
         scroll-behavior: smooth;
+    }
+}
+
+img {
+    pointer-events: none;
+    user-select: none;
+}
+
+li:has(img) {
+    list-style: none;
+}
+
+li:hover img {
+    transform: scale(1.15) translateY(-0.2rem);
+    filter: var(--theme-filter) drop-shadow(0 0 0.5rem currentColor);
+}
+
+img.themed-image {
+    filter: var(--theme-filter);
+}
+
+:root {
+    --theme-filter: grayscale(1) invert(72%) sepia(20%) saturate(700%)
+        hue-rotate(135deg) brightness(70%) contrast(105%);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --theme-filter: grayscale(1) invert(72%) sepia(20%) saturate(700%)
+            hue-rotate(165deg) brightness(105%) contrast(105%);
     }
 }

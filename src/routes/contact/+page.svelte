@@ -2,17 +2,17 @@
     const links = [
         [
             "GitHub",
-            "https://icones.pro/wp-content/uploads/2021/06/icone-github-violet.png",
+            "https://www.svgrepo.com/show/447165/github-outline.svg",
             "https://github.com/PokumeKachi",
         ],
         [
             "Discord",
-            "https://en.wikifur.com/w/images/d/d0/Discord_logo.png",
+            "https://www.svgrepo.com/show/447163/discord-outline.svg",
             "https://discord.com/users/1401468404367491135",
         ],
         [
             "Instagram",
-            "https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg",
+            "https://www.svgrepo.com/show/447167/instagram-outline.svg",
             "https://www.instagram.com/kachiyes",
         ],
     ] as const;
@@ -22,7 +22,7 @@
     <ul class="grid">
         {#each links as [name, icon, url]}
             <li>
-                <img src={icon} alt={name} />
+                <img class="themed-image" src={icon} alt={name} />
                 <a href={url}></a>
             </li>
         {/each}
@@ -32,19 +32,9 @@
 <style>
     li {
         position: relative;
-        list-style: none;
         padding: 0;
         width: 5rem;
         height: 5rem;
-    }
-
-    img {
-        width: 5rem;
-        pointer-events: none;
-        user-select: none;
-        transition:
-            transform 0.2s ease,
-            filter 0.2s ease;
     }
 
     a {
@@ -52,15 +42,17 @@
         inset: 0;
     }
 
-    li:hover img {
-        transform: scale(1.15) translateY(-0.2rem);
-        filter: drop-shadow(0 0 0.5rem currentColor);
-    }
-
     ul {
         display: flex;
         justify-content: center;
         gap: 1rem;
         padding: 0;
+    }
+
+    img {
+        width: 5rem;
+        transition:
+            transform 0.2s ease,
+            filter 0.2s ease;
     }
 </style>

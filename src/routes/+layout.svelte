@@ -134,6 +134,17 @@
 <svelte:head>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/favicon.ico" sizes="any" />
+
+    <title>Pokume Kachi</title>
+    <meta name="description" content="Crazy good website innit?" />
+
+    <meta property="og:title" content="Pokume Kachi" />
+    <meta
+        property="og:description"
+        content="Student and programmer from Vietnam."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://pokumekachi.vercel.app" />
 </svelte:head>
 
 <div class:loaded={introStarted} class="loading-overlay"></div>
