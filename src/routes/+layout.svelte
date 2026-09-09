@@ -12,6 +12,12 @@
 
     import Header from "./Header.svelte";
 
+    const defaultPage = {
+        transform: "translateY(0)",
+        opacity: 1,
+        filter: "blur(0)",
+    };
+
     const pageAnimation = {
         enter: {
             keyframes: [
@@ -20,11 +26,7 @@
                     opacity: 0,
                     filter: "blur(16px)",
                 },
-                {
-                    transform: "translateY(0)",
-                    opacity: 1,
-                    filter: "blur(0)",
-                },
+                defaultPage,
             ],
             options: {
                 duration: PAGE_TRANSITION_DURATION,
@@ -35,11 +37,7 @@
 
         exit: {
             keyframes: [
-                {
-                    transform: "translateY(0)",
-                    opacity: 1,
-                    filter: "blur(0)",
-                },
+                defaultPage,
                 {
                     transform: "translateY(-50vh)",
                     opacity: 0,
@@ -67,7 +65,9 @@
     };
 
     let { children } = $props();
+
     let navigating = $state(false);
+    let introStarted = $state(false);
 
     $effect(() => {
         if (navigating) {
@@ -105,6 +105,10 @@
             headerAnimation.keyframes,
             headerAnimation.options,
         );
+
+        requestAnimationFrame(() => {
+            introStarted = true;
+        });
     });
 
     onNavigate((navigation) => {
@@ -132,7 +136,10 @@
     <link rel="icon" href="/favicon.ico" sizes="any" />
 </svelte:head>
 
+<div class:loaded={introStarted} class="loading-overlay"></div>
+
 <Header bind:this={header} {navigating} />
+
 <div class="page">
     {@render children()}
 </div>
@@ -155,5 +162,19 @@
     .page {
         min-height: 100vh;
         transform-origin: center;
+    }
+
+    .loading-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+
+        background: var(--pico-background-color);
+
+        pointer-events: auto;
+    }
+
+    .loading-overlay.loaded {
+        display: none;
     }
 </style>
