@@ -34,10 +34,8 @@
 </script>
 
 <main>
-    <section id="whoiam">
-        <h2 data-tooltip="Personal information">
-            <a href="#whoiam">whoiam</a>
-        </h2>
+    <section>
+        <h2>whoiam</h2>
 
         <table class="container">
             <tbody>
@@ -68,10 +66,8 @@
         </table>
     </section>
 
-    <section id="whatido">
-        <h2 data-tooltip="Available skillset">
-            <a href="#whatido">whatido</a>
-        </h2>
+    <section>
+        <h2>whatido</h2>
 
         <section class="container">
             <h3>Languages</h3>
@@ -180,10 +176,8 @@
         </section>
     </section>
 
-    <section id="whatidid">
-        <h2 data-tooltip="Past projects">
-            <a href="#whatidid">whatidid</a>
-        </h2>
+    <section>
+        <h2>whatidid</h2>
 
         <section class="container">
             <section>
