@@ -51,8 +51,5 @@
 
     img {
         width: 5rem;
-        transition:
-            transform 0.2s ease,
-            filter 0.2s ease;
     }
 </style>

@@ -1,2 +1,4 @@
 export const PAGE_INTRODUCTION_DURATION = 2000;
 export const PAGE_TRANSITION_DURATION = 500;
+
+export const LENIS_LERP = 0.08;

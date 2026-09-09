@@ -2,12 +2,15 @@
     import "@picocss/pico/css/pico.css";
     import "./layout.css";
 
+    import Lenis from "lenis";
+
     import { onMount } from "svelte";
     import { onNavigate } from "$app/navigation";
 
     import {
         PAGE_INTRODUCTION_DURATION,
         PAGE_TRANSITION_DURATION,
+        LENIS_LERP
     } from "$lib/animation";
 
     import Header from "./Header.svelte";
@@ -97,6 +100,11 @@
     }
 
     onMount(() => {
+        const lenis = new Lenis({
+            lerp: LENIS_LERP,
+            autoRaf: true,
+        });
+
         animatePage(pageAnimation.enter, PAGE_INTRODUCTION_DURATION);
 
         const headerElement = document.querySelector<HTMLElement>("header");
@@ -109,6 +117,10 @@
         requestAnimationFrame(() => {
             introStarted = true;
         });
+
+        return () => {
+            lenis.destroy();
+        };
     });
 
     onNavigate((navigation) => {
@@ -157,7 +169,6 @@
 
 <style>
     :global(html) {
-        overflow: hidden auto;
         scrollbar-width: none;
     }
 
