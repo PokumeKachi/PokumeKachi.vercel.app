@@ -4,10 +4,10 @@
     import MorphText from "$lib/components/MorphText.svelte";
 
     const titles: Record<string, string> = {
-        "/": "Pokume Kachi",
-        "/projects": "Products, delivered",
-        "/contact": "Communication, simplified",
-        "/loimon": "The one true LMS solution",
+        "/": "Pokume Kachi.",
+        "/projects": "Products, delivered.",
+        "/contact": "Communication, simplified.",
+        "/loimon": "The one true LMS solution.",
     };
 
     let { navigating } = $props<{
