@@ -44,9 +44,7 @@
     ] as const;
 </script>
 
-<header
-    style={`--transition-duration: ${PAGE_TRANSITION_DURATION * 2}ms`}
->
+<header style={`--transition-duration: ${PAGE_TRANSITION_DURATION * 2}ms`}>
     <nav>
         <ul class="nav-title">
             <li>
@@ -78,6 +76,11 @@
 </header>
 
 <style>
+    header {
+        padding-inline: 1rem;
+        z-index: 1;
+    }
+
     .nav-title > li {
         animation: nav-enter var(--transition-duration) cubic-bezier(0, 1, 0, 1)
             both;
