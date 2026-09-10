@@ -25,10 +25,10 @@
             type="button"
             class="topbar"
             onclick={openExternal}
-            aria-label="Open preview in new tab"
-            title="Open preview in new tab"
+            aria-label="Open in new tab"
+            title="Open in new tab"
         >
-            <span>Preview</span>
+            <span>Open in new tab</span>
             <svg
                 viewBox="0 0 24 24"
                 fill="none"

@@ -18,8 +18,7 @@
             lenis.stop();
 
             cleanup = () => {
-                document.documentElement.style.overflow =
-                    previousHtmlOverflow;
+                document.documentElement.style.overflow = previousHtmlOverflow;
                 document.body.style.overflow = previousBodyOverflow;
 
                 lenis.start();
@@ -33,11 +32,12 @@
 </script>
 
 <main class="container">
-    <section class="grid">
-        <h5><a href="/loimon">Lối Mòn</a></h5>
-        <h5><a href="/loimon">Lối Mòn</a></h5>
-        <h5><a href="/loimon">Lối Mòn</a></h5>
-        <h5><a href="/loimon">Lối Mòn</a></h5>
-        <h5><a href="/loimon">Lối Mòn</a></h5>
-    </section>
+    <ul>
+        <li>
+            <h5>
+                <a href="/projects/loimon">Lối Mòn</a> - The optimally distributed
+                knowledge system.
+            </h5>
+        </li>
+    </ul>
 </main>

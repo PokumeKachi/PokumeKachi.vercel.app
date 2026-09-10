@@ -7,7 +7,8 @@
         "/": "Pokume Kachi.",
         "/projects": "Products, delivered.",
         "/contact": "Communication, simplified.",
-        "/loimon": "The one true LMS solution.",
+
+        "/projects/loimon": "The one true LMS solution.",
     };
 
     let { navigating } = $props<{
