@@ -86,12 +86,15 @@
 
         background: color-mix(
             in srgb,
-            var(--pico-background-color) 75%,
+            var(--pico-background-color) 55%,
             transparent
         );
 
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
+        backdrop-filter: blur(24px) saturate(180%);
+        -webkit-backdrop-filter: blur(24px) saturate(180%);
+
+        border-bottom: 1px solid
+            color-mix(in srgb, currentColor 8%, transparent);
     }
 
     .nav-title > li {
