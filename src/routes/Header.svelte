@@ -90,8 +90,8 @@
             transparent
         );
 
-        backdrop-filter: blur(24px) saturate(180%);
         -webkit-backdrop-filter: blur(24px) saturate(180%);
+        backdrop-filter: blur(24px) saturate(180%);
 
         border-bottom: 1px solid
             color-mix(in srgb, currentColor 8%, transparent);
