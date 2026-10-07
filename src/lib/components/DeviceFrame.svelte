@@ -50,7 +50,7 @@
             title="Embedded content"
             sandbox="allow-scripts allow-same-origin allow-forms"
             allow="accelerometer; camera; encrypted-media; gyroscope; picture-in-picture"
-            style="width:100%; aspect-ratio:{ratio}; border:0; display:block; background:#f0f0f0;"
+            style="width:100%; aspect-ratio:{ratio}; border:0; display:block; background:#f0f0f0; margin:0;"
         ></iframe>
     </div>
 </div>
@@ -67,6 +67,7 @@
         align-items: center;
         justify-content: space-between;
         padding: 0.5rem 0.75rem;
+        margin: 0;
         border: 0;
         border-radius: 0;
         background: var(--pico-card-background-color);
