@@ -35,8 +35,10 @@
     <ul>
         <li>
             <h5>
-                <a href="https://ybiau.vercel.app">ybiau</a> - Your Brain In ASCII / UTF-8
+                <a href="/projects/ybiau">ybiau</a> - Your Brain In ASCII / UTF-8
             </h5>
+        </li>
+        <li>
             <h5>
                 <a href="/projects/loimon">Lối Mòn</a> - The optimally distributed
                 knowledge system.
