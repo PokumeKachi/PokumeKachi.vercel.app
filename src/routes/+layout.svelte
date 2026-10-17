@@ -113,6 +113,43 @@
             autoRaf: true,
         });
 
+        const updateScrollGlow = ({
+            scroll,
+            limit,
+        }: {
+            scroll: number;
+            limit: number;
+        }) => {
+            const scrollProgress =
+                Number.isFinite(scroll) && Number.isFinite(limit) && limit > 0
+                    ? Math.max(0, Math.min(scroll / limit, 1))
+                    : 0;
+
+            const threshold = 0.5;
+
+            const progress = Math.max(
+                0,
+                Math.min((scrollProgress - threshold) / (1 - threshold), 1),
+            );
+
+            document.documentElement.style.setProperty(
+                "--glow-primary",
+                `${5 + progress * 20}%`,
+            );
+
+            document.documentElement.style.setProperty(
+                "--glow-secondary",
+                `${5 + progress * 10}%`,
+            );
+        };
+
+        lenis.on("scroll", updateScrollGlow);
+
+        updateScrollGlow({
+            scroll: lenis.scroll,
+            limit: lenis.limit,
+        });
+
         resolveLenis(lenis);
 
         animatePage(pageAnimation.enter, PAGE_INTRODUCTION_DURATION);
@@ -212,5 +249,25 @@
 
     .loading-overlay.loaded {
         display: none;
+    }
+
+    :global(:root) {
+        --glow-primary: 5%;
+        --glow-secondary: 5%;
+    }
+
+    :global(html) {
+        background-image: radial-gradient(
+            ellipse 100% 30% at 50% 100%,
+            color-mix(
+                in srgb,
+                var(--pico-primary) var(--glow-primary),
+                transparent
+            ),
+            transparent 100%
+        );
+
+        background-attachment: fixed;
+        background-repeat: no-repeat;
     }
 </style>
