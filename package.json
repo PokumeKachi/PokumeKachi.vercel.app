@@ -5,6 +5,7 @@
     "type": "module",
     "scripts": {
         "generate-pdf": "tsx scripts/generate-pdf.ts",
+        "prebuild": "pnpm run generate-pdf",
         "dev": "vite dev",
         "build": "vite build",
         "preview": "vite preview",
