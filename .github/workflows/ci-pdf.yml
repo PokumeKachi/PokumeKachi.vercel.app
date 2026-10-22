@@ -1,0 +1,24 @@
+name: Generate and Commit PDF
+on:
+  push:
+    branches: [ main ]
+jobs:
+  build-pdf:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install dependencies
+        run: npm ci
+      - name: Generate PDF
+        run: npm run generate-pdf
+      - name: Commit and push PDF
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git add public/resume.pdf
+          git commit -m "chore: update generated PDF [skip ci]" || echo "No changes to commit"
+          git push origin main
