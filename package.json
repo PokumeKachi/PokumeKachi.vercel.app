@@ -8,7 +8,7 @@
         "prebuild": "pnpm run generate-pdf",
         "dev": "vite dev",
         "build": "vite build",
-        "postbuild": "svelte-sitemap --domain https://pokumekachi.vercel.app",
+        "postbuild": "svelte-sitemap --out-dir .vercel/output/static --domain https://pokumekachi.vercel.app",
         "preview": "vite preview",
         "prepare": "svelte-kit sync || echo ''",
         "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
