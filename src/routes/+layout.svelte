@@ -4,6 +4,13 @@
 
     import Lenis from "lenis";
 
+    import { Spring } from "svelte/motion";
+
+    const glow = new Spring(0, {
+        stiffness: 0.1,
+        damping: 0.5,
+    });
+
     import { onMount, setContext } from "svelte";
     import { onNavigate } from "$app/navigation";
 
@@ -16,6 +23,7 @@
     import Header from "./Header.svelte";
 
     let resolveLenis: (lenis: Lenis) => void;
+    let refreshScrollGlow: (() => void) | undefined;
 
     const lenisReady = new Promise<Lenis>((resolve) => {
         resolveLenis = resolve;
@@ -78,13 +86,19 @@
     let { children } = $props();
 
     let navigating = $state(false);
+    let headerHeight = $state(0);
     let introStarted = $state(false);
 
     $effect(() => {
+        const progress = glow.current;
+        const root = document.documentElement;
+
+        root.style.setProperty("--glow-primary", `${0 + progress * 5}%`);
+
         if (navigating) {
-            document.documentElement.classList.add("navigating");
+            root.classList.add("navigating");
         } else {
-            document.documentElement.classList.remove("navigating");
+            root.classList.remove("navigating");
         }
     });
 
@@ -113,42 +127,34 @@
             autoRaf: true,
         });
 
-        const updateScrollGlow = ({
+        function updateScrollGlow({
             scroll,
             limit,
         }: {
             scroll: number;
             limit: number;
-        }) => {
+        }) {
             const scrollProgress =
                 Number.isFinite(scroll) && Number.isFinite(limit) && limit > 0
                     ? Math.max(0, Math.min(scroll / limit, 1))
                     : 0;
 
-            const threshold = 0.5;
+            glow.target = scrollProgress >= 0.8 ? 1 : 0;
+        }
 
-            const progress = Math.max(
-                0,
-                Math.min((scrollProgress - threshold) / (1 - threshold), 1),
-            );
+        function refresh() {
+            lenis.resize();
 
-            document.documentElement.style.setProperty(
-                "--glow-primary",
-                `${5 + progress * 20}%`,
-            );
+            updateScrollGlow({
+                scroll: lenis.scroll,
+                limit: lenis.limit,
+            });
+        }
 
-            document.documentElement.style.setProperty(
-                "--glow-secondary",
-                `${5 + progress * 10}%`,
-            );
-        };
+        refreshScrollGlow = refresh;
 
         lenis.on("scroll", updateScrollGlow);
-
-        updateScrollGlow({
-            scroll: lenis.scroll,
-            limit: lenis.limit,
-        });
+        refresh();
 
         resolveLenis(lenis);
 
@@ -166,6 +172,14 @@
         });
 
         return () => {
+            refreshScrollGlow = undefined;
+
+            lenis.off("scroll", updateScrollGlow);
+
+            if (frameId !== null) {
+                cancelAnimationFrame(frameId);
+            }
+
             lenis.destroy();
         };
     });
@@ -190,6 +204,10 @@
         return exit.finished.then(() => () => {
             animatePage(pageAnimation.enter);
             navigating = false;
+
+            requestAnimationFrame(() => {
+                refreshScrollGlow?.();
+            });
         });
     });
 </script>
@@ -212,9 +230,9 @@
 
 <div class:loaded={introStarted} class="loading-overlay"></div>
 
-<Header bind:this={header} {navigating} />
+<Header bind:this={header} bind:headerHeight {navigating} />
 
-<div class="page">
+<div class="page" style={`--header-height: ${headerHeight}px`}>
     {@render children()}
 </div>
 
@@ -252,13 +270,12 @@
     }
 
     :global(:root) {
-        --glow-primary: 5%;
-        --glow-secondary: 5%;
+        --glow-primary: 0%;
     }
 
     :global(html) {
         background-image: radial-gradient(
-            ellipse 100% 30% at 50% 100%,
+            ellipse 100% 20% at 50% 100%,
             color-mix(
                 in srgb,
                 var(--pico-primary) var(--glow-primary),

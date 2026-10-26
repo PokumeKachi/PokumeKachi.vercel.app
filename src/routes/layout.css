@@ -1,5 +1,17 @@
 @import "tailwindcss";
 
+html:has(.iframe-wrapper),
+body:has(.iframe-wrapper) {
+    overflow: hidden;
+    overscroll-behavior: none;
+}
+
+.page:has(.iframe-wrapper) {
+    height: calc(100dvh - var(--header-height));
+    min-height: 0;
+    overflow: hidden;
+}
+
 img {
     pointer-events: none;
     user-select: none;

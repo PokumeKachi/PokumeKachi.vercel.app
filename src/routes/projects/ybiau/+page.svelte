@@ -2,7 +2,4 @@
     import DeviceFrame from "$lib/components/DeviceFrame.svelte";
 </script>
 
-<main class="container">
-    <DeviceFrame url="https://ybiau.vercel.app"/>
-</main>
-
+<DeviceFrame url="https://ybiau.vercel.app" />

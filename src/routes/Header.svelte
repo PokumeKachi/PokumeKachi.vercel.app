@@ -7,15 +7,21 @@
         "/": "Pokume Kachi.",
         "/projects": "Products, delivered.",
         "/contact": "Communication, simplified.",
-
         "/projects/loimon": "The one true LMS solution.",
-    };
+        "/projects/ybiau": "The personal knowledge base.",
+    } as const;
 
-    let { navigating } = $props<{
+    const links = [
+        ["Home", "/"],
+        ["Projects", "/projects"],
+        ["Contact", "/contact"],
+    ] as const;
+
+    let { navigating, headerHeight = $bindable(0) } = $props<{
         navigating: boolean;
+        headerHeight?: number;
     }>();
-
-    let activePath = $state(page.url.pathname);
+    let activePath: string = $state(page.url.pathname);
 
     let morphText: {
         morphTo: (text: string) => void;
@@ -37,15 +43,14 @@
 
         activePath = href;
     }
-
-    const links = [
-        ["Home", "/"],
-        ["Projects", "/projects"],
-        ["Contact", "/contact"],
-    ] as const;
 </script>
 
-<header style={`--transition-duration: ${PAGE_TRANSITION_DURATION * 2}ms`}>
+<header
+    bind:clientHeight={headerHeight}
+    style={`
+        --transition-duration: ${PAGE_TRANSITION_DURATION * 2}ms;
+    `}
+>
     <nav>
         <ul class="nav-title">
             <li>
