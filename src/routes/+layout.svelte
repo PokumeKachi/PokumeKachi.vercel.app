@@ -93,7 +93,7 @@
         const progress = glow.current;
         const root = document.documentElement;
 
-        root.style.setProperty("--glow-primary", `${0 + progress * 5}%`);
+        root.style.setProperty("--glow-primary", `${progress * 5}%`);
 
         if (navigating) {
             root.classList.add("navigating");
@@ -127,6 +127,19 @@
             autoRaf: true,
         });
 
+        let pull = 0;
+
+        lenis.on("virtual-scroll", ({ deltaY }) => {
+            const atTop = lenis.scroll <= 0;
+            const atBottom = lenis.scroll >= lenis.limit;
+
+            if ((atTop && deltaY < 0) || (atBottom && deltaY > 0)) {
+                pull += deltaY;
+            } else {
+                pull = 0;
+            }
+        });
+
         function updateScrollGlow({
             scroll,
             limit,
@@ -139,7 +152,7 @@
                     ? Math.max(0, Math.min(scroll / limit, 1))
                     : 0;
 
-            glow.target = scrollProgress >= 0.8 ? 1 : 0;
+            glow.target = scrollProgress > 0.5 ? scrollProgress : 0;
         }
 
         function refresh() {
@@ -275,12 +288,8 @@
 
     :global(html) {
         background-image: radial-gradient(
-            ellipse 100% 20% at 50% 100%,
-            color-mix(
-                in srgb,
-                var(--pico-primary) var(--glow-primary),
-                transparent
-            ),
+            ellipse 100% var(--glow-primary) at 50% 100%,
+            color-mix(in srgb, var(--pico-secondary) 50%, transparent),
             transparent 100%
         );
 
