@@ -145,11 +145,4 @@
         position: absolute;
         inset: 0;
     }
-
-    @media (min-width: 601px) {
-        .sizer,
-        .layer {
-            white-space: nowrap;
-        }
-    }
 </style>

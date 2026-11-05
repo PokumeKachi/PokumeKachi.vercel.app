@@ -18,7 +18,7 @@
         PAGE_INTRODUCTION_DURATION,
         PAGE_TRANSITION_DURATION,
         LENIS_LERP,
-    } from "$lib/animation";
+    } from "$lib/design-language";
 
     import Header from "./Header.svelte";
 
