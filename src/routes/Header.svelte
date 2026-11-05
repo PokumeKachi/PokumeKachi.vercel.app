@@ -62,6 +62,47 @@
             : `${viewportWidth - 16 * compact.current}px`,
     );
 
+    const morphBackgroundStyle = $derived(`
+        background: color-mix(
+            in srgb,
+            var(--pico-card-background-color)
+            ${60 * compact.current}%,
+            transparent
+        );
+
+        -webkit-backdrop-filter:
+            blur(${28 * compact.current}px)
+            saturate(${100 + 80 * compact.current}%);
+
+        backdrop-filter:
+            blur(${28 * compact.current}px)
+            saturate(${100 + 80 * compact.current}%);
+
+        border-color: color-mix(
+            in srgb,
+            var(--pico-muted-border-color)
+            ${70 * compact.current}%,
+            transparent
+        );
+
+        box-shadow:
+            0 ${8 * compact.current}px
+            ${28 * compact.current}px
+            color-mix(
+                in srgb,
+                var(--pico-color)
+                ${8 * compact.current}%,
+                transparent
+            ),
+            inset 0 1px 0
+            color-mix(
+                in srgb,
+                var(--pico-background-color)
+                ${12 * compact.current}%,
+                transparent
+            );
+    `);
+
     onMount(() => {
         function update() {
             viewportWidth = document.documentElement.clientWidth;
@@ -95,46 +136,7 @@
             <li>
                 <div
                     class="morph-background"
-                    style={`
-                        background: color-mix(
-                            in srgb,
-                            var(--pico-card-background-color)
-                            ${60 * compact.current}%,
-                            transparent
-                        );
-
-                        -webkit-backdrop-filter:
-                            blur(${28 * compact.current}px)
-                            saturate(${100 + 80 * compact.current}%);
-
-                        backdrop-filter:
-                            blur(${28 * compact.current}px)
-                            saturate(${100 + 80 * compact.current}%);
-
-                        border-color: color-mix(
-                            in srgb,
-                            var(--pico-muted-border-color)
-                            ${70 * compact.current}%,
-                            transparent
-                        );
-
-                        box-shadow:
-                            0 ${8 * compact.current}px
-                            ${28 * compact.current}px
-                            color-mix(
-                                in srgb,
-                                var(--pico-color)
-                                ${8 * compact.current}%,
-                                transparent
-                            ),
-                            inset 0 1px 0
-                            color-mix(
-                                in srgb,
-                                var(--pico-background-color)
-                                ${12 * compact.current}%,
-                                transparent
-                            );
-                    `}
+                    style={morphBackgroundStyle}
                 >
                     <MorphText
                         bind:this={morphText}
