@@ -13,6 +13,7 @@
     const titles: Record<string, string> = {
         "/": "Pokume Kachi.",
         "/projects": "Products, delivered.",
+        "/blog": "Personal life, updated.",
         "/contact": "Communication, simplified.",
         "/projects/loimon": "The one true LMS solution.",
         "/projects/ybiau": "The personal knowledge base.",
@@ -21,6 +22,7 @@
     const links = [
         ["Home", "/"],
         ["Projects", "/projects"],
+        ["Blog", "/blog"],
         ["Contact", "/contact"],
     ] as const;
 
