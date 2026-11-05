@@ -1,4 +1,6 @@
 <script lang="ts">
+    import ScrollLock from "$lib/traits/ScrollLock.svelte";
+
     const links = [
         [
             "GitHub",
@@ -16,38 +18,9 @@
             "https://www.instagram.com/kachiyes",
         ],
     ] as const;
-
-    import { getContext, onMount } from "svelte";
-    import type Lenis from "lenis";
-
-    const lenisReady = getContext<Promise<Lenis>>("lenis");
-
-    onMount(() => {
-        let cleanup: (() => void) | undefined;
-
-        lenisReady.then((lenis) => {
-            const previousHtmlOverflow =
-                document.documentElement.style.overflow;
-            const previousBodyOverflow = document.body.style.overflow;
-
-            document.documentElement.style.overflow = "hidden";
-            document.body.style.overflow = "hidden";
-
-            lenis.stop();
-
-            cleanup = () => {
-                document.documentElement.style.overflow = previousHtmlOverflow;
-                document.body.style.overflow = previousBodyOverflow;
-
-                lenis.start();
-            };
-        });
-
-        return () => {
-            cleanup?.();
-        };
-    });
 </script>
+
+<ScrollLock />
 
 <main class="container">
     <ul class="grid">

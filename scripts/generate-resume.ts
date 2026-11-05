@@ -1,10 +1,11 @@
-// src/lib/server/pdf/render.ts
+import { writeFile, mkdir } from "node:fs/promises";
+import { dirname, resolve } from "node:path";
 import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 
 const A4 = [595.28, 841.89] as const;
 const MARGIN = 48;
 
-export async function renderCv(): Promise<Uint8Array> {
+async function renderCv(): Promise<Uint8Array> {
     const doc = await PDFDocument.create();
     const page = doc.addPage([...A4]);
     const bold = await doc.embedFont(StandardFonts.HelveticaBold);
@@ -47,3 +48,8 @@ export async function renderCv(): Promise<Uint8Array> {
 
     return doc.save();
 }
+
+const out = resolve("static/resume.pdf");
+await mkdir(dirname(out), { recursive: true });
+await writeFile(out, await renderCv());
+console.log(`wrote ${out}`);
