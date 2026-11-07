@@ -3,28 +3,21 @@
     import { Spring } from "svelte/motion";
 
     import { page } from "$app/state";
+
     import {
         PAGE_TRANSITION_DURATION,
+        STAGGER_INTERVAL,
         RADIUS,
         SPRING,
-    } from "$lib/design-language";
-    import MorphText from "$lib/components/MorphText.svelte";
+        SURFACE_BLUR,
+        MorphText,
+    } from "$lib";
+    import { PATH_TITLES, HEADER_LINKS } from "$lib/content/sitemap";
 
-    const titles: Record<string, string> = {
-        "/": "Pokume Kachi.",
-        "/projects": "Products, delivered.",
-        "/blog": "Personal life, updated.",
-        "/contact": "Communication, simplified.",
-        "/projects/loimon": "The one true LMS solution.",
-        "/projects/ybiau": "The personal knowledge base.",
-    } as const;
+    import { fly } from "svelte/transition";
+    import { cubicOut } from "svelte/easing";
 
-    const links = [
-        ["Home", "/"],
-        ["Projects", "/projects"],
-        ["Blog", "/blog"],
-        ["Contact", "/contact"],
-    ] as const;
+    const entranceDuration = PAGE_TRANSITION_DURATION * 2;
 
     let { navigating, headerHeight = $bindable(0) } = $props<{
         navigating: boolean;
@@ -33,19 +26,30 @@
 
     let activePath: string = $state(page.url.pathname);
 
-    let morphText: {
-        morphTo: (text: string) => void;
-    };
+    let morphText:
+        | {
+              morphTo: (text: string) => void;
+          }
+        | undefined;
 
     $effect(() => {
         activePath = page.url.pathname;
     });
 
     export function morphTitle(pathname: string) {
-        morphText?.morphTo(titles[pathname] ?? "Pokume Kachi");
+        morphText?.morphTo(PATH_TITLES[pathname] ?? PATH_TITLES["/"]);
     }
 
     function navigate(href: string, event: MouseEvent) {
+        if (
+            event.button !== 0 ||
+            event.metaKey ||
+            event.ctrlKey ||
+            event.shiftKey ||
+            event.altKey
+        )
+            return;
+
         if (navigating || href === page.url.pathname) {
             event.preventDefault();
             return;
@@ -56,14 +60,6 @@
 
     const compact = new Spring(0, SPRING);
 
-    let viewportWidth = $state<number | null>(null);
-
-    const headerWidth = $derived(
-        viewportWidth === null
-            ? "100%"
-            : `${viewportWidth - 16 * compact.current}px`,
-    );
-
     const morphBackgroundStyle = $derived(`
         background: color-mix(
             in srgb,
@@ -73,11 +69,11 @@
         );
 
         -webkit-backdrop-filter:
-            blur(${28 * compact.current}px)
+            blur(${SURFACE_BLUR * compact.current}px)
             saturate(${100 + 80 * compact.current}%);
 
         backdrop-filter:
-            blur(${28 * compact.current}px)
+            blur(${SURFACE_BLUR * compact.current}px)
             saturate(${100 + 80 * compact.current}%);
 
         border-color: color-mix(
@@ -107,18 +103,16 @@
 
     onMount(() => {
         function update() {
-            viewportWidth = document.documentElement.clientWidth;
             compact.target = window.scrollY > 10 ? 1 : 0;
         }
 
         update();
+        morphTitle(page.url.pathname);
 
         window.addEventListener("scroll", update, { passive: true });
-        window.addEventListener("resize", update);
 
         return () => {
             window.removeEventListener("scroll", update);
-            window.removeEventListener("resize", update);
         };
     });
 </script>
@@ -126,24 +120,27 @@
 <header
     bind:clientHeight={headerHeight}
     style={`
-        --transition-duration: ${PAGE_TRANSITION_DURATION * 2}ms;
+        --transition-duration: ${entranceDuration}ms;
         --radius: ${RADIUS}rem;
 
-        width: ${headerWidth};
-        top: ${12 * compact.current}px;
+        --compact: ${compact.current};
+
+        width: calc(100% - 16px * var(--compact));
+        top: calc(12px * var(--compact));
     `}
 >
-
     <nav>
         <ul class="nav-title">
-            <li>
-                <div
-                    class="morph-background"
-                    style={morphBackgroundStyle}
-                >
+            <li
+                in:fly={{
+                    y: -12,
+                    duration: entranceDuration,
+                    easing: cubicOut,
+                }}
+            >
+                <div class="morph-background" style={morphBackgroundStyle}>
                     <MorphText
                         bind:this={morphText}
-                        text={titles[page.url.pathname] ?? "Pokume Kachi"}
                         duration={PAGE_TRANSITION_DURATION}
                     />
                 </div>
@@ -151,11 +148,10 @@
         </ul>
 
         <ul class="nav-links">
-            {#each links as [name, href], i}
+            {#each HEADER_LINKS as [name, href], i}
                 <li
                     style={`animation-delay: ${
-                        PAGE_TRANSITION_DURATION * 2 +
-                        i * (PAGE_TRANSITION_DURATION * 0.5)
+                        PAGE_TRANSITION_DURATION + i * STAGGER_INTERVAL
                     }ms`}
                 >
                     <a
@@ -189,7 +185,7 @@
         justify-content: space-between;
 
         min-width: 0;
-        gap: 1rem;
+        gap: 0;
     }
 
     .nav-title {
@@ -208,19 +204,6 @@
         min-width: 0;
         margin: 0;
         padding: 0;
-
-        animation: nav-enter-slide var(--transition-duration)
-            cubic-bezier(0, 1, 0, 1) both;
-    }
-
-    @keyframes nav-enter-slide {
-        from {
-            transform: translateY(-0.75rem);
-        }
-
-        to {
-            transform: translateY(0);
-        }
     }
 
     .morph-background {
@@ -235,24 +218,11 @@
     }
 
     .nav-links {
-        display: flex;
-        flex: 0 0 auto;
-        align-items: center;
-
-        gap: 0;
-        margin: 0;
-        padding-inline: 1rem;
-
-        list-style: none;
-        white-space: nowrap;
-
         background: var(--pico-card-background-color);
         border: 1px solid var(--pico-muted-border-color);
     }
 
     .nav-links > li {
-        flex: 0 0 auto;
-
         animation: nav-enter var(--transition-duration) cubic-bezier(0, 1, 0, 1)
             both;
     }

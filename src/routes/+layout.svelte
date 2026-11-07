@@ -4,13 +4,6 @@
 
     import Lenis from "lenis";
 
-    import { Spring } from "svelte/motion";
-
-    const glow = new Spring(0, {
-        stiffness: 0.1,
-        damping: 0.5,
-    });
-
     import { onMount, setContext } from "svelte";
     import { onNavigate } from "$app/navigation";
 
@@ -18,12 +11,11 @@
         PAGE_INTRODUCTION_DURATION,
         PAGE_TRANSITION_DURATION,
         LENIS_LERP,
-    } from "$lib/design-language";
+    } from "$lib";
 
     import Header from "./Header.svelte";
 
-    let resolveLenis: (lenis: Lenis) => void;
-    let refreshScrollGlow: (() => void) | undefined;
+    let resolveLenis!: (lenis: Lenis) => void;
 
     const lenisReady = new Promise<Lenis>((resolve) => {
         resolveLenis = resolve;
@@ -90,10 +82,7 @@
     let introStarted = $state(false);
 
     $effect(() => {
-        const progress = glow.current;
         const root = document.documentElement;
-
-        root.style.setProperty("--glow-primary", `${progress * 5}%`);
 
         if (navigating) {
             root.classList.add("navigating");
@@ -106,6 +95,8 @@
         morphTitle: (pathname: string) => void;
     };
 
+    let pageAnimationInstance: Animation | undefined;
+
     function animatePage(
         animation: typeof pageAnimation.enter,
         duration = animation.options.duration,
@@ -113,12 +104,14 @@
         const page = document.querySelector<HTMLElement>(".page");
         if (!page) return;
 
-        page.getAnimations().forEach((a) => a.cancel());
+        pageAnimationInstance?.cancel();
 
-        return page.animate(animation.keyframes, {
+        pageAnimationInstance = page.animate(animation.keyframes, {
             ...animation.options,
             duration,
         });
+
+        return pageAnimationInstance;
     }
 
     onMount(() => {
@@ -126,48 +119,6 @@
             lerp: LENIS_LERP,
             autoRaf: true,
         });
-
-        let pull = 0;
-
-        lenis.on("virtual-scroll", ({ deltaY }) => {
-            const atTop = lenis.scroll <= 0;
-            const atBottom = lenis.scroll >= lenis.limit;
-
-            if ((atTop && deltaY < 0) || (atBottom && deltaY > 0)) {
-                pull += deltaY;
-            } else {
-                pull = 0;
-            }
-        });
-
-        function updateScrollGlow({
-            scroll,
-            limit,
-        }: {
-            scroll: number;
-            limit: number;
-        }) {
-            const scrollProgress =
-                Number.isFinite(scroll) && Number.isFinite(limit) && limit > 0
-                    ? Math.max(0, Math.min(scroll / limit, 1))
-                    : 0;
-
-            glow.target = scrollProgress > 0.5 ? scrollProgress : 0;
-        }
-
-        function refresh() {
-            lenis.resize();
-
-            updateScrollGlow({
-                scroll: lenis.scroll,
-                limit: lenis.limit,
-            });
-        }
-
-        refreshScrollGlow = refresh;
-
-        lenis.on("scroll", updateScrollGlow);
-        refresh();
 
         resolveLenis(lenis);
 
@@ -181,18 +132,12 @@
         );
 
         requestAnimationFrame(() => {
-            introStarted = true;
+            requestAnimationFrame(() => {
+                introStarted = true;
+            });
         });
 
         return () => {
-            refreshScrollGlow = undefined;
-
-            lenis.off("scroll", updateScrollGlow);
-
-            if (frameId !== null) {
-                cancelAnimationFrame(frameId);
-            }
-
             lenis.destroy();
         };
     });
@@ -214,14 +159,14 @@
             return;
         }
 
-        return exit.finished.then(() => () => {
-            animatePage(pageAnimation.enter);
-            navigating = false;
-
-            requestAnimationFrame(() => {
-                refreshScrollGlow?.();
+        return exit.finished
+            .then(() => () => {
+                animatePage(pageAnimation.enter);
+                navigating = false;
+            })
+            .catch(() => {
+                navigating = false;
             });
-        });
     });
 </script>
 
@@ -280,20 +225,5 @@
 
     .loading-overlay.loaded {
         display: none;
-    }
-
-    :global(:root) {
-        --glow-primary: 0%;
-    }
-
-    :global(html) {
-        background-image: radial-gradient(
-            ellipse 100% var(--glow-primary) at 50% 100%,
-            color-mix(in srgb, var(--pico-secondary) 50%, transparent),
-            transparent 100%
-        );
-
-        background-attachment: fixed;
-        background-repeat: no-repeat;
     }
 </style>

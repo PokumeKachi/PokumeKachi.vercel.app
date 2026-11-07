@@ -1,15 +1,7 @@
-// place files you want to import through the `$lib` alias in this folder.
+export { default as DeviceFrame } from "./components/DeviceFrame.svelte";
+export { default as MorphText } from "./components/MorphText.svelte";
+export { default as ScrollProgress } from "./components/ScrollProgress.svelte";
 
-import DeviceFrame from "./components/DeviceFrame.svelte";
-import MorphText from "./components/MorphText.svelte";
-import ScrollProgress from "./components/MorphText.svelte";
+export { default as ScrollLock } from "./traits/ScrollLock.svelte";
 
-import ScrollLock from "./traits/ScrollLock.svelte"
-
-import {
-    PAGE_INTRODUCTION_DURATION,
-    PAGE_TRANSITION_DURATION,
-    LENIS_LERP,
-    RADIUS,
-    SPRING,
-} from "./DesignLanguage.ts";
+export * from "./DesignLanguage.ts";

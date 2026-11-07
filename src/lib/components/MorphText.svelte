@@ -2,11 +2,11 @@
     import { onMount } from "svelte";
 
     type Props = {
-        text: string;
+        text?: string;
         duration?: number;
     };
 
-    let { text, duration = 500 }: Props = $props();
+    let { text = "", duration = 500 }: Props = $props();
 
     let display: HTMLHeadingElement;
     let size: HTMLSpanElement;

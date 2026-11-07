@@ -1,5 +1,6 @@
 export const PAGE_INTRODUCTION_DURATION = 2000;
 export const PAGE_TRANSITION_DURATION = 500;
+export const STAGGER_INTERVAL = 150;
 
 export const LENIS_LERP = 0.1;
 
@@ -9,4 +10,6 @@ export const SPRING = {
     stiffness: 0.3,
     damping: 1,
     precision: 0.001,
-};
+} as const;
+
+export const SURFACE_BLUR = 4;
