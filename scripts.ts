@@ -49,7 +49,21 @@ async function renderCv(): Promise<Uint8Array> {
     return doc.save();
 }
 
-const out = resolve("static/resume.pdf");
-await mkdir(dirname(out), { recursive: true });
-await writeFile(out, await renderCv());
-console.log(`wrote ${out}`);
+async function generateResume() {
+    const out = resolve("static/resume.pdf");
+    await mkdir(dirname(out), { recursive: true });
+    await writeFile(out, await renderCv());
+    console.log(`wrote ${out}`);
+}
+
+const [command, ...args] = process.argv.slice(2);
+
+switch (command) {
+    case "generate-resume":
+        await generateResume();
+        break;
+
+    default:
+        console.error(`Unknown command: ${command}`);
+        process.exit(1);
+}

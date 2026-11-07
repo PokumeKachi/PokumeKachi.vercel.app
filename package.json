@@ -4,9 +4,9 @@
     "version": "0.0.1",
     "type": "module",
     "scripts": {
-        "predev": "tsx scripts/generate-resume.ts",
+        "predev": "tsx scripts.ts generate-resume",
         "dev": "vite dev",
-        "prebuild": "tsx scripts/generate-resume.ts",
+        "prebuild": "tsx scripts.ts generate-resume",
         "build": "vite build",
         "preview": "vite preview",
         "prepare": "svelte-kit sync || echo ''",
