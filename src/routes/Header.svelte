@@ -53,6 +53,7 @@
         }
 
         activePath = href;
+        morphTitle(href);
     }
 
     const compact = new Spring(0, SPRING);
@@ -99,18 +100,14 @@
     `);
 
     onMount(() => {
-        function update() {
-            compact.target = window.scrollY > 10 ? 1 : 0;
-        }
-
-        update();
         morphTitle(page.url.pathname);
-
-        window.addEventListener("scroll", update, { passive: true });
-
-        return () => {
-            window.removeEventListener("scroll", update);
+        const pageEl = document.querySelector<HTMLElement>(".page");
+        const update = () => {
+            compact.target = (pageEl?.scrollTop ?? 0) > 10 ? 1 : 0;
         };
+        update();
+        pageEl?.addEventListener("scroll", update, { passive: true });
+        return () => pageEl?.removeEventListener("scroll", update);
     });
 </script>
 

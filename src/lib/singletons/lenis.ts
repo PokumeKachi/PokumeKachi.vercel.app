@@ -8,7 +8,17 @@ export default function getLenis(): Lenis {
     if (instance) return instance;
     if (!browser) throw new Error("getLenis() must be called on the client");
 
-    instance = new Lenis({ lerp: LENIS_LERP, autoRaf: true });
+    const wrapper = document.querySelector<HTMLElement>(".page") ?? undefined;
+    const content =
+        document.querySelector<HTMLElement>(".page-content") ?? undefined;
+
+    instance = new Lenis({
+        lerp: LENIS_LERP,
+        autoRaf: true,
+        wrapper,
+        content,
+    });
+
     return instance;
 }
 

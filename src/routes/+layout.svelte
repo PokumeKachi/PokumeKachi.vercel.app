@@ -2,6 +2,8 @@
     import "@picocss/pico/css/pico.css";
     import "./layout.css";
 
+    import { acquireScrollLock } from "$lib/behaviors/ScrollLock.svelte";
+
     import { onMount } from "svelte";
     import { onNavigate } from "$app/navigation";
 
@@ -17,16 +19,8 @@
     let introStarted = $state(false);
 
     $effect(() => {
-        const root = document.documentElement;
-
-        if (navigating) {
-            root.classList.add("navigating");
-        } else {
-            root.classList.remove("navigating");
-        }
+        document.documentElement.classList.toggle("navigating", navigating);
     });
-
-    let header = $state<{ morphTitle: (pathname: string) => void }>();
 
     let pageAnimationInstance: Animation | undefined;
 
@@ -48,16 +42,23 @@
     onMount(() => {
         getLenis();
 
-        animatePage(pageAnimation.intro);
+        const release = acquireScrollLock();
 
-        const headerElement = document.querySelector<HTMLElement>("header");
+        const intro = animatePage(pageAnimation.intro);
 
-        headerElement?.animate(
-            headerAnimation.keyframes,
-            headerAnimation.options,
-        );
+        document
+            .querySelector<HTMLElement>("header")
+            ?.animate(headerAnimation.keyframes, headerAnimation.options);
 
         requestAnimationFrame(() => (introStarted = true));
+
+        if (intro) {
+            intro.finished.then(release, release);
+        } else {
+            release();
+        }
+
+        return release;
     });
 
     onNavigate((navigation) => {
@@ -67,8 +68,6 @@
         if (to === from) return;
 
         navigating = true;
-
-        header?.morphTitle(to ?? "/");
 
         const exit = animatePage(pageAnimation.exit);
 
@@ -82,25 +81,41 @@
                 animatePage(pageAnimation.enter);
                 navigating = false;
             })
-            .catch(() => {
+            .catch((err) => {
+                if ((err as Error)?.name !== "AbortError") console.error(err);
                 navigating = false;
             });
     });
 </script>
 
 <div class:loaded={introStarted} class="before-page-load-overlay"></div>
-<Header bind:this={header} bind:headerHeight {navigating} />
+
+<Header bind:headerHeight {navigating} />
+
 <div
     class="page"
-    style={`--remaining-height: calc(100dvh - ${headerHeight}px)`}
+    style={`--remaining-height: calc(100svh - ${headerHeight}px)`}
 >
-    {@render children()}
+    <div class="page-content">
+        {@render children()}
+    </div>
 </div>
 
 <style>
     .page {
-        min-height: 100vh;
+        height: var(--remaining-height);
+        overflow-y: auto;
         transform-origin: center;
+
+        scrollbar-width: none;
+    }
+
+    .page::-webkit-scrollbar {
+        display: none;
+    }
+
+    .page-content {
+        min-height: 100%;
     }
 
     .before-page-load-overlay {
@@ -109,7 +124,6 @@
         z-index: 9999;
 
         background: var(--pico-background-color);
-
         pointer-events: auto;
     }
 
