@@ -1,10 +1,5 @@
 @import "tailwindcss";
 
-img {
-    pointer-events: none;
-    user-select: none;
-}
-
 li img {
     transition:
         transform 0.2s ease,
@@ -15,7 +10,8 @@ li:has(img) {
     list-style: none;
 }
 
-li:hover img {
+li:hover img,
+li:focus-within img {
     transform: scale(1.15) translateY(-0.2rem);
     filter: var(--theme-filter) drop-shadow(0 0 0.5rem currentColor);
 }
@@ -29,9 +25,32 @@ img.themed-image {
         hue-rotate(135deg) brightness(70%) contrast(105%);
 }
 
+html {
+    scrollbar-width: none;
+}
+
+html::-webkit-scrollbar {
+    display: none;
+}
+
+html.navigating,
+html.navigating * {
+    cursor: wait !important;
+}
+
 @media (prefers-color-scheme: dark) {
     :root {
         --theme-filter: grayscale(1) invert(72%) sepia(20%) saturate(700%)
             hue-rotate(165deg) brightness(105%) contrast(105%);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
     }
 }

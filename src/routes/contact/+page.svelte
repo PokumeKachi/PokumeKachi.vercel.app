@@ -1,5 +1,5 @@
 <script lang="ts">
-    import ScrollLock from "$lib/traits/ScrollLock.svelte";
+    import ScrollLock from "$lib/behaviors/ScrollLock.svelte";
 
     const links = [
         [

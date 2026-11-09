@@ -1,0 +1,4 @@
+export const PAGE_INTRODUCTION_DURATION = 3000;
+export const PAGE_TRANSITION_DURATION = 500;
+export const STAGGER_INTERVAL = 150;
+

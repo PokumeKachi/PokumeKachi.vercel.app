@@ -14,9 +14,6 @@
     } from "$lib";
     import { PATH_TITLES, HEADER_LINKS } from "$lib/content/sitemap";
 
-    import { fly } from "svelte/transition";
-    import { cubicOut } from "svelte/easing";
-
     const entranceDuration = PAGE_TRANSITION_DURATION * 2;
 
     let { navigating, headerHeight = $bindable(0) } = $props<{
@@ -131,13 +128,7 @@
 >
     <nav>
         <ul class="nav-title">
-            <li
-                in:fly={{
-                    y: -12,
-                    duration: entranceDuration,
-                    easing: cubicOut,
-                }}
-            >
+            <li>
                 <div class="morph-background" style={morphBackgroundStyle}>
                     <MorphText
                         bind:this={morphText}
@@ -150,7 +141,7 @@
         <ul class="nav-links">
             {#each HEADER_LINKS as [name, href], i}
                 <li
-                    style={`animation-delay: ${
+                    style:animation-delay={`${
                         PAGE_TRANSITION_DURATION + i * STAGGER_INTERVAL
                     }ms`}
                 >

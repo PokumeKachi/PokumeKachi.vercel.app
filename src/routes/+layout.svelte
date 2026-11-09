@@ -2,78 +2,13 @@
     import "@picocss/pico/css/pico.css";
     import "./layout.css";
 
-    import Lenis from "lenis";
-
-    import { onMount, setContext } from "svelte";
+    import { onMount } from "svelte";
     import { onNavigate } from "$app/navigation";
 
-    import {
-        PAGE_INTRODUCTION_DURATION,
-        PAGE_TRANSITION_DURATION,
-        LENIS_LERP,
-    } from "$lib";
+    import { pageAnimation, headerAnimation } from "$lib";
+    import getLenis from "$lib/singletons/lenis";
 
     import Header from "./Header.svelte";
-
-    let resolveLenis!: (lenis: Lenis) => void;
-
-    const lenisReady = new Promise<Lenis>((resolve) => {
-        resolveLenis = resolve;
-    });
-
-    setContext("lenis", lenisReady);
-
-    const defaultPage = {
-        transform: "translateY(0)",
-        opacity: 1,
-        filter: "blur(0)",
-    };
-
-    const pageAnimation = {
-        enter: {
-            keyframes: [
-                {
-                    transform: "translateY(50vh)",
-                    opacity: 0,
-                    filter: "blur(16px)",
-                },
-                defaultPage,
-            ],
-            options: {
-                duration: PAGE_TRANSITION_DURATION,
-                easing: "cubic-bezier(0, 1, 0, 1)",
-                fill: "forwards" as FillMode,
-            },
-        },
-
-        exit: {
-            keyframes: [
-                defaultPage,
-                {
-                    transform: "translateY(-50vh)",
-                    opacity: 0,
-                    filter: "blur(16px)",
-                },
-            ],
-            options: {
-                duration: PAGE_TRANSITION_DURATION,
-                easing: "cubic-bezier(1, 0, 0, 1)",
-                fill: "forwards" as FillMode,
-            },
-        },
-    };
-
-    const headerAnimation = {
-        keyframes: [
-            { transform: "translateY(-100%)" },
-            { transform: "translateY(0)" },
-        ],
-        options: {
-            duration: PAGE_INTRODUCTION_DURATION,
-            easing: "cubic-bezier(0, 1, 0, 1)",
-            fill: "forwards" as FillMode,
-        },
-    };
 
     let { children } = $props();
 
@@ -91,38 +26,29 @@
         }
     });
 
-    let header: {
-        morphTitle: (pathname: string) => void;
-    };
+    let header = $state<{ morphTitle: (pathname: string) => void }>();
 
     let pageAnimationInstance: Animation | undefined;
 
     function animatePage(
-        animation: typeof pageAnimation.enter,
-        duration = animation.options.duration,
+        animation: (typeof pageAnimation)[keyof typeof pageAnimation],
     ) {
         const page = document.querySelector<HTMLElement>(".page");
         if (!page) return;
 
         pageAnimationInstance?.cancel();
-
-        pageAnimationInstance = page.animate(animation.keyframes, {
-            ...animation.options,
-            duration,
-        });
+        pageAnimationInstance = page.animate(
+            animation.keyframes,
+            animation.options,
+        );
 
         return pageAnimationInstance;
     }
 
     onMount(() => {
-        const lenis = new Lenis({
-            lerp: LENIS_LERP,
-            autoRaf: true,
-        });
+        getLenis();
 
-        resolveLenis(lenis);
-
-        animatePage(pageAnimation.enter, PAGE_INTRODUCTION_DURATION);
+        animatePage(pageAnimation.intro);
 
         const headerElement = document.querySelector<HTMLElement>("header");
 
@@ -131,15 +57,7 @@
             headerAnimation.options,
         );
 
-        requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-                introStarted = true;
-            });
-        });
-
-        return () => {
-            lenis.destroy();
-        };
+        requestAnimationFrame(() => (introStarted = true));
     });
 
     onNavigate((navigation) => {
@@ -170,50 +88,22 @@
     });
 </script>
 
-<svelte:head>
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="icon" href="/favicon.ico" sizes="any" />
-
-    <title>Pokume Kachi</title>
-    <meta name="description" content="Crazy good website innit?" />
-
-    <meta property="og:title" content="Pokume Kachi" />
-    <meta
-        property="og:description"
-        content="Student and programmer from Vietnam."
-    />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://pokumekachi.vercel.app" />
-</svelte:head>
-
-<div class:loaded={introStarted} class="loading-overlay"></div>
-
+<div class:loaded={introStarted} class="before-page-load-overlay"></div>
 <Header bind:this={header} bind:headerHeight {navigating} />
-
-<div class="page" style={`--header-height: ${headerHeight}px`}>
+<div
+    class="page"
+    style={`--remaining-height: calc(100dvh - ${headerHeight}px)`}
+>
     {@render children()}
 </div>
 
 <style>
-    :global(html) {
-        scrollbar-width: none;
-    }
-
-    :global(html::-webkit-scrollbar) {
-        display: none;
-    }
-
-    :global(html.navigating),
-    :global(html.navigating *) {
-        cursor: wait !important;
-    }
-
     .page {
         min-height: 100vh;
         transform-origin: center;
     }
 
-    .loading-overlay {
+    .before-page-load-overlay {
         position: fixed;
         inset: 0;
         z-index: 9999;
@@ -223,7 +113,7 @@
         pointer-events: auto;
     }
 
-    .loading-overlay.loaded {
+    .before-page-load-overlay.loaded {
         display: none;
     }
 </style>
