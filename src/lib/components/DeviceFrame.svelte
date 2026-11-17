@@ -1,59 +1,70 @@
 <script lang="ts">
     import ScrollLock from "$lib/behaviors/ScrollLock.svelte";
 
-    let { url = "https://example.com" } = $props();
+    interface Props {
+        url?: string;
+    }
 
-    const hostname = $derived.by(() => {
+    let { url = "https://example.com" }: Props = $props();
+
+    const embedUrl = $derived.by(() => {
         try {
-            return new URL(url).hostname;
+            const parsed = new URL(url);
+
+            if (
+                !["http:", "https:"].includes(parsed.protocol) ||
+                parsed.username ||
+                parsed.password
+            ) {
+                return null;
+            }
+
+            return parsed;
         } catch {
-            return "external site";
+            return null;
         }
     });
-
-    function openExternal() {
-        try {
-            const u = new URL(url);
-            if (u.protocol !== "http:" && u.protocol !== "https:") return;
-            window.open(u.href, "_blank", "noopener,noreferrer");
-        } catch {}
-    }
 </script>
 
 <ScrollLock />
 
 <div class="iframe-wrapper">
-    <button
-        type="button"
-        class="topbar"
-        onclick={openExternal}
-        title="Open in new tab"
-    >
-        <span>Open in new tab</span>
-        <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
+    {#if embedUrl}
+        <a
+            class="topbar"
+            href={embedUrl.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Open ${embedUrl.hostname} in a new tab`}
         >
-            <path d="M14 3h7v7" />
-            <path d="M10 14 21 3" />
-            <path
-                d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5"
-            />
-        </svg>
-    </button>
+            <span>Open in new tab</span>
 
-    <iframe
-        src={url}
-        loading="lazy"
-        title={`Embedded content from ${hostname}`}
-        sandbox="allow-scripts allow-same-origin allow-forms"
-        allow="encrypted-media; picture-in-picture"
-    ></iframe>
+            <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+            >
+                <path
+                    d="M14 3h7v7M10 14 21 3M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5"
+                />
+            </svg>
+        </a>
+
+        <iframe
+            src={embedUrl.href}
+            title={`Embedded content from ${embedUrl.hostname}`}
+            sandbox="allow-scripts allow-forms"
+            allow="encrypted-media; picture-in-picture"
+        ></iframe>
+    {:else}
+        <p class="embed-error" role="alert">
+            Invalid URL. Only HTTP and HTTPS URLs are supported.
+        </p>
+    {/if}
 </div>
 
 <style>
@@ -64,8 +75,9 @@
         width: 100%;
         height: var(
             --remaining-height,
-            calc(100svh - var(--header-height, 0px))
+            calc(100dvh - var(--header-height, 0px))
         );
+        min-height: 0;
 
         overflow: hidden;
         border-radius: var(--pico-border-radius);
@@ -73,20 +85,23 @@
     }
 
     .topbar {
-        flex: 0 0 auto;
-
-        width: 100%;
         display: flex;
+        flex: 0 0 auto;
         align-items: center;
         justify-content: space-between;
+
+        width: 100%;
         padding: 0.5rem 0.75rem;
         margin: 0;
+
         border: 0;
         border-radius: 0;
         background: var(--pico-card-background-color);
         color: inherit;
-        cursor: pointer;
+
         text-align: left;
+        text-decoration: none;
+        cursor: pointer;
     }
 
     .topbar:hover {
@@ -110,14 +125,21 @@
 
     iframe {
         display: block;
-        flex: 1 1 auto;
+        flex: 1 1 0;
 
         width: 100%;
         height: 0;
+        min-width: 0;
         min-height: 0;
 
-        border: 0;
         margin: 0;
+        border: 0;
         background: var(--pico-card-background-color);
+    }
+
+    .embed-error {
+        margin: auto;
+        padding: 1rem;
+        text-align: center;
     }
 </style>

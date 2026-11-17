@@ -1,5 +1,4 @@
-import { browser } from "$app/environment";
-import Lenis from "lenis";
+import { browser, Lenis } from "$lib";
 import { LENIS_LERP } from "$lib/design-language/motion";
 
 let instance: Lenis | undefined;

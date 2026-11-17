@@ -27,7 +27,7 @@
         {#each links as [name, icon, url]}
             <li>
                 <img class="themed-image" src={icon} alt={name} />
-                <a href={url}></a>
+                <a href={url} aria-label={`Visit ${name}`}></a>
             </li>
         {/each}
     </ul>

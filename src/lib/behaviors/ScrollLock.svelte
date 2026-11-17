@@ -1,6 +1,5 @@
 <script module lang="ts">
-    import { browser } from "$app/environment";
-    import type Lenis from "lenis";
+    import { browser, Lenis } from "$lib";
     import getLenis from "$lib/singletons/lenis";
 
     let lockCount = 0;
@@ -11,6 +10,7 @@
     export function acquireScrollLock(): () => void {
         if (lockCount === 0) {
             instance = getLenis();
+
             savedHtml = document.documentElement.style.overflow;
             savedBody = document.body.style.overflow;
 
@@ -22,10 +22,16 @@
 
         lockCount++;
 
+        let released = false;
+
         return () => {
+            if (released) return;
+            released = true;
+
             if (--lockCount === 0 && instance) {
                 document.documentElement.style.overflow = savedHtml;
                 document.body.style.overflow = savedBody;
+
                 instance.start();
                 instance = undefined;
             }
@@ -47,7 +53,6 @@
 </script>
 
 <script lang="ts">
-    import { onMount } from "svelte";
-
+    import { onMount } from "$lib";
     onMount(acquireScrollLock);
 </script>

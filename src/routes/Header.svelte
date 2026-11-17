@@ -1,25 +1,23 @@
 <script lang="ts">
-    import { onMount } from "svelte";
-    import { Spring } from "svelte/motion";
-
-    import { page } from "$app/state";
-
+    import { onMount, Spring, page } from "$lib";
     import {
         PAGE_TRANSITION_DURATION,
         STAGGER_INTERVAL,
         RADIUS,
         SPRING,
         SURFACE_BLUR,
-        MorphText,
-    } from "$lib";
+    } from "$lib/design-language";
+    import MorphText from "$lib/components/MorphText.svelte";
     import { PATH_TITLES, HEADER_LINKS } from "$lib/content/sitemap";
 
     const entranceDuration = PAGE_TRANSITION_DURATION * 2;
 
-    let { navigating, headerHeight = $bindable(0) } = $props<{
+    type Props = {
         navigating: boolean;
         headerHeight?: number;
-    }>();
+    };
+
+    let { navigating, headerHeight = $bindable(0) }: Props = $props();
 
     let activePath: string = $state(page.url.pathname);
 
@@ -220,11 +218,6 @@
             opacity: 0;
             transform: translateY(-0.75rem);
         }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
     }
 
     .nav-links a {
@@ -272,23 +265,10 @@
         transform: scaleX(1);
     }
 
-    * {
-        user-select: none;
-    }
-
     .morph-background,
     .nav-links,
     .nav-links a,
     .nav-links a::after {
         border-radius: var(--radius);
-    }
-
-    @supports (corner-shape: squircle) {
-        .morph-background,
-        .nav-links,
-        .nav-links a,
-        .nav-links a::after {
-            corner-shape: squircle;
-        }
     }
 </style>

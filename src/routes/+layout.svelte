@@ -7,7 +7,7 @@
     import { onMount } from "svelte";
     import { onNavigate } from "$app/navigation";
 
-    import { pageAnimation, headerAnimation } from "$lib";
+    import { pageAnimation, headerAnimation } from "$lib/design-language";
     import getLenis from "$lib/singletons/lenis";
 
     import Header from "./Header.svelte";
@@ -69,22 +69,36 @@
 
         navigating = true;
 
+        const release = acquireScrollLock();
         const exit = animatePage(pageAnimation.exit);
 
         if (!exit) {
             navigating = false;
+            release();
             return;
         }
 
-        return exit.finished
-            .then(() => () => {
-                animatePage(pageAnimation.enter);
+        return exit.finished.then(
+            () => () => {
+                const enter = animatePage(pageAnimation.enter);
+
                 navigating = false;
-            })
-            .catch((err) => {
-                if ((err as Error)?.name !== "AbortError") console.error(err);
+
+                if (enter) {
+                    enter.finished.then(release, release);
+                } else {
+                    release();
+                }
+            },
+            (err) => {
                 navigating = false;
-            });
+                release();
+
+                if ((err as Error)?.name !== "AbortError") {
+                    console.error(err);
+                }
+            },
+        );
     });
 </script>
 
@@ -104,7 +118,7 @@
 <style>
     .page {
         height: var(--remaining-height);
-        overflow-y: auto;
+        overflow: visible;
         transform-origin: center;
 
         scrollbar-width: none;

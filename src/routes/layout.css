@@ -5,17 +5,14 @@ li img {
         transform var(--pico-transition),
         filter var(--pico-transition);
 }
-
 li:has(img) {
     list-style: none;
 }
-
 li:hover img,
 li:focus-within img {
     transform: scale(1.15) translateY(-0.2rem);
     filter: var(--theme-filter) drop-shadow(0 0 0.5rem currentColor);
 }
-
 img.themed-image {
     filter: var(--theme-filter);
 }
@@ -38,6 +35,12 @@ html.navigating * {
     cursor: wait !important;
 }
 
+button,
+nav,
+.no-select {
+    user-select: none;
+}
+
 @media (prefers-color-scheme: dark) {
     :root {
         --theme-filter: grayscale(1) invert(72%) sepia(20%) saturate(700%)
@@ -52,5 +55,11 @@ html.navigating * {
         animation-duration: 0.01ms !important;
         transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;
+    }
+}
+
+@supports (corner-shape: squircle) {
+    * {
+        corner-shape: squircle;
     }
 }

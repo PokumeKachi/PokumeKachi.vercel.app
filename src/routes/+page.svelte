@@ -1,15 +1,10 @@
 <script lang="ts">
-    import { ScrollProgress, ScrollLock } from "$lib";
+    import ScrollProgress from "$lib/components/ScrollProgress.svelte";
 </script>
 
-<!-- <ScrollLock /> -->
-
 <ScrollProgress />
-<main>
-    <section class="container">
-        <h1>yea</h1>
-    </section>
-</main>
 
-<style>
-</style>
+<main class="container">
+    <h1>Pokume Kachi</h1>
+    <p>Student and programmer from Vietnam.</p>
+</main>

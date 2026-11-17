@@ -20,6 +20,8 @@
         if (!a || !b || !display || !size) return;
         if (nextText === currentText) return;
 
+        display.setAttribute("aria-label", nextText);
+
         cancelAnimationFrame(frameId);
 
         size.textContent = nextText;
@@ -76,6 +78,7 @@
     onMount(() => {
         currentText = text;
 
+        display.setAttribute("aria-label", text);
         size.textContent = text;
         a.textContent = text;
         b.textContent = "";
@@ -105,7 +108,7 @@
     </defs>
 </svg>
 
-<h1 class="morph" bind:this={display}>
+<h1 class="morph" bind:this={display} aria-label={text}>
     <span class="sizer" bind:this={size} aria-hidden="true"></span>
     <span class="layer" bind:this={a} aria-hidden="true"></span>
     <span class="layer" bind:this={b} aria-hidden="true"></span>

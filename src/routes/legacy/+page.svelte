@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { ScrollProgress } from "$lib";
+    import ScrollProgress from "$lib/components/ScrollProgress.svelte";
 
     const languages = [
         {
@@ -358,12 +358,6 @@
 </main>
 
 <style>
-    h2 a {
-        color: inherit;
-        text-decoration: none;
-        display: block;
-    }
-
     .lang-row {
         display: flex;
         flex-wrap: wrap;

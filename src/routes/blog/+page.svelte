@@ -9,7 +9,7 @@
         html: string;
     };
 
-    const markdownFiles = import.meta.glob("$lib/blogs/*.md", {
+    const markdownFiles = import.meta.glob("$lib/content/blogs/*.md", {
         eager: true,
         query: "?raw",
         import: "default",
