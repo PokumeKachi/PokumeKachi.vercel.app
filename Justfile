@@ -4,6 +4,3 @@ _default:
 run:
     pnpm install
     pnpm run dev
-
-todo:
-    taskwarrior-tui --taskdata .task
