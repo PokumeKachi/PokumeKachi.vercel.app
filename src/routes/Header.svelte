@@ -1,5 +1,6 @@
 <script lang="ts">
     import { onMount, Spring, page } from "$lib";
+    import getLenis from "$lib/singletons/lenis";
     import {
         PAGE_TRANSITION_DURATION,
         STAGGER_INTERVAL,
@@ -99,13 +100,17 @@
 
     onMount(() => {
         morphTitle(page.url.pathname);
-        const pageEl = document.querySelector<HTMLElement>(".page");
-        const update = () => {
-            compact.target = (pageEl?.scrollTop ?? 0) > 10 ? 1 : 0;
+
+        const update = ({ scroll }: { scroll: number }) => {
+            compact.target = scroll > 10 ? 1 : 0;
+            console.log(scroll);
         };
-        update();
-        pageEl?.addEventListener("scroll", update, { passive: true });
-        return () => pageEl?.removeEventListener("scroll", update);
+
+        update({ scroll: getLenis().scroll });
+
+        getLenis().on("scroll", update);
+
+        return () => getLenis().off("scroll", update);
     });
 </script>
 
@@ -118,13 +123,12 @@
         --compact: ${compact.current};
 
         width: calc(100% - 16px * var(--compact));
-        top: calc(12px * var(--compact));
     `}
 >
     <nav>
-        <ul class="nav-title">
+        <ul id="nav-title">
             <li>
-                <div class="morph-background" style={morphBackgroundStyle}>
+                <div class="cluster-background" style={morphBackgroundStyle}>
                     <MorphText
                         bind:this={morphText}
                         duration={PAGE_TRANSITION_DURATION}
@@ -133,36 +137,42 @@
             </li>
         </ul>
 
-        <ul class="nav-links">
-            {#each HEADER_LINKS as [name, href], i}
-                <li
-                    style:animation-delay={`${
-                        PAGE_TRANSITION_DURATION + i * STAGGER_INTERVAL
-                    }ms`}
-                >
-                    <a
-                        {href}
-                        class:active={activePath === href}
-                        aria-current={activePath === href ? "page" : undefined}
-                        onclick={(event) => navigate(href, event)}
+        <ul id="nav-links">
+            <div class="cluster-background" style={morphBackgroundStyle}>
+                {#each HEADER_LINKS as [name, href], i}
+                    <li
+                        style:animation-delay={`${
+                            PAGE_TRANSITION_DURATION + i * STAGGER_INTERVAL
+                        }ms`}
                     >
-                        {name}
-                    </a>
-                </li>
-            {/each}
+                        <a
+                            {href}
+                            class:active={activePath === href}
+                            aria-current={activePath === href
+                                ? "page"
+                                : undefined}
+                            onclick={(event) => navigate(href, event)}
+                        >
+                            {name}
+                        </a>
+                    </li>
+                {/each}
+            </div>
         </ul>
     </nav>
 </header>
 
 <style>
     header {
-        position: sticky;
+        position: fixed;
         top: 0;
         z-index: 100;
 
-        margin-inline: auto;
         box-sizing: border-box;
-        padding-inline: 1rem;
+        margin: 0;
+        padding: 1rem;
+
+        pointer-events: none;
     }
 
     nav {
@@ -174,7 +184,7 @@
         gap: 0;
     }
 
-    .nav-title {
+    #nav-title {
         display: block;
         flex: 1 1 0;
 
@@ -185,14 +195,14 @@
         list-style: none;
     }
 
-    .nav-title > li {
+    #nav-title > li {
         width: 100%;
         min-width: 0;
         margin: 0;
         padding: 0;
     }
 
-    .morph-background {
+    .cluster-background {
         width: fit-content;
         max-width: 100%;
         min-width: 0;
@@ -203,12 +213,7 @@
         border-radius: var(--radius);
     }
 
-    .nav-links {
-        background: var(--pico-card-background-color);
-        border: 1px solid var(--pico-muted-border-color);
-    }
-
-    .nav-links > li {
+    li {
         animation: nav-enter var(--transition-duration) cubic-bezier(0, 1, 0, 1)
             both;
     }
@@ -220,7 +225,7 @@
         }
     }
 
-    .nav-links a {
+    #nav-links a {
         position: relative;
         display: inline-flex;
         align-items: center;
@@ -237,12 +242,12 @@
         transition: border-color var(--pico-transition);
     }
 
-    .nav-links a:hover {
+    #nav-links a:hover {
         border-color: var(--pico-primary-hover-border);
         text-decoration: none;
     }
 
-    .nav-links a::after {
+    #nav-links a::after {
         content: "";
         position: absolute;
 
@@ -261,14 +266,18 @@
             cubic-bezier(0, 1, 0, 1);
     }
 
-    .nav-links a.active::after {
+    #nav-links a.active::after {
         transform: scaleX(1);
     }
 
-    .morph-background,
-    .nav-links,
-    .nav-links a,
-    .nav-links a::after {
+    .cluster-background,
+    #nav-links,
+    #nav-links a,
+    #nav-links a::after {
         border-radius: var(--radius);
+    }
+
+    a {
+        pointer-events: auto;
     }
 </style>

@@ -27,7 +27,7 @@
     function animatePage(
         animation: (typeof pageAnimation)[keyof typeof pageAnimation],
     ) {
-        const page = document.querySelector<HTMLElement>(".page");
+        const page = document.querySelector<HTMLElement>("#page");
         if (!page) return;
 
         pageAnimationInstance?.cancel();
@@ -41,24 +41,11 @@
 
     onMount(() => {
         getLenis();
-
-        const release = acquireScrollLock();
-
-        const intro = animatePage(pageAnimation.intro);
-
+        animatePage(pageAnimation.intro);
         document
             .querySelector<HTMLElement>("header")
             ?.animate(headerAnimation.keyframes, headerAnimation.options);
-
         requestAnimationFrame(() => (introStarted = true));
-
-        if (intro) {
-            intro.finished.then(release, release);
-        } else {
-            release();
-        }
-
-        return release;
     });
 
     onNavigate((navigation) => {
@@ -103,32 +90,22 @@
 </script>
 
 <div class:loaded={introStarted} class="before-page-load-overlay"></div>
-
 <Header bind:headerHeight {navigating} />
-
-<div
-    class="page"
-    style={`--remaining-height: calc(100svh - ${headerHeight}px)`}
->
-    <div class="page-content">
+<div id="header-spacer" style={`height: ${headerHeight}px`}></div>
+<div id="page" style={`--remaining-height: calc(100dvh - ${headerHeight}px)`}>
+    <div id="page-content">
         {@render children()}
     </div>
 </div>
 
 <style>
-    .page {
+    #page {
         height: var(--remaining-height);
         overflow: visible;
         transform-origin: center;
-
-        scrollbar-width: none;
     }
 
-    .page::-webkit-scrollbar {
-        display: none;
-    }
-
-    .page-content {
+    #page-content {
         min-height: 100%;
     }
 

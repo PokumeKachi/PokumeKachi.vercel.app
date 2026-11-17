@@ -1,26 +1,20 @@
 <script module lang="ts">
-    import { browser, Lenis } from "$lib";
     import getLenis from "$lib/singletons/lenis";
 
     let lockCount = 0;
     let savedHtml = "";
     let savedBody = "";
-    let instance: Lenis | undefined;
 
     export function acquireScrollLock(): () => void {
-        if (lockCount === 0) {
-            instance = getLenis();
-
+        if (lockCount++ === 0) {
             savedHtml = document.documentElement.style.overflow;
             savedBody = document.body.style.overflow;
 
             document.documentElement.style.overflow = "hidden";
             document.body.style.overflow = "hidden";
 
-            instance.stop();
+            getLenis().stop();
         }
-
-        lockCount++;
 
         let released = false;
 
@@ -28,27 +22,13 @@
             if (released) return;
             released = true;
 
-            if (--lockCount === 0 && instance) {
+            if (--lockCount === 0) {
                 document.documentElement.style.overflow = savedHtml;
                 document.body.style.overflow = savedBody;
 
-                instance.start();
-                instance = undefined;
+                getLenis().start();
             }
         };
-    }
-
-    if (import.meta.hot) {
-        import.meta.hot.dispose(() => {
-            if (!browser || lockCount === 0 || !instance) return;
-
-            document.documentElement.style.overflow = savedHtml;
-            document.body.style.overflow = savedBody;
-            instance.start();
-
-            lockCount = 0;
-            instance = undefined;
-        });
     }
 </script>
 

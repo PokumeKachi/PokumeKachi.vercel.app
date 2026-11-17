@@ -23,6 +23,16 @@ img.themed-image {
 }
 
 html {
+    min-height: 100%;
+}
+
+body {
+    min-height: 100%;
+    height: auto;
+}
+
+html {
+    overflow: auto;
     scrollbar-width: none;
 }
 
