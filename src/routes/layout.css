@@ -2,8 +2,8 @@
 
 li img {
     transition:
-        transform 0.2s ease,
-        filter 0.2s ease;
+        transform var(--pico-transition),
+        filter var(--pico-transition);
 }
 
 li:has(img) {
