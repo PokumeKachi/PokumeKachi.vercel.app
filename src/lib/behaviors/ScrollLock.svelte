@@ -2,18 +2,24 @@
     import getLenis from "$lib/singletons/lenis";
 
     let lockCount = 0;
-    let savedHtml = "";
-    let savedBody = "";
+    let releaseLock: (() => void) | undefined;
 
     export function acquireScrollLock(): () => void {
         if (lockCount++ === 0) {
-            savedHtml = document.documentElement.style.overflow;
-            savedBody = document.body.style.overflow;
+            const { documentElement: html, body } = document;
+            const savedHtml = html.style.overflow;
+            const savedBody = body.style.overflow;
 
-            document.documentElement.style.overflow = "hidden";
-            document.body.style.overflow = "hidden";
-
+            html.style.overflow = "hidden";
+            body.style.overflow = "hidden";
             getLenis().stop();
+
+            releaseLock = () => {
+                html.style.overflow = savedHtml;
+                body.style.overflow = savedBody;
+                getLenis().start();
+                releaseLock = undefined;
+            };
         }
 
         let released = false;
@@ -22,12 +28,7 @@
             if (released) return;
             released = true;
 
-            if (--lockCount === 0) {
-                document.documentElement.style.overflow = savedHtml;
-                document.body.style.overflow = savedBody;
-
-                getLenis().start();
-            }
+            if (--lockCount === 0) releaseLock?.();
         };
     }
 </script>
