@@ -101,12 +101,11 @@
     onMount(() => {
         morphTitle(page.url.pathname);
 
-        const update = ({ scroll }: { scroll: number }) => {
-            compact.target = scroll > 10 ? 1 : 0;
-            console.log(scroll);
+        const update = () => {
+            compact.target = (getLenis().scroll <= headerHeight && getLenis().targetScroll <= 2) ? 0 : 1;
         };
 
-        update({ scroll: getLenis().scroll });
+        update();
 
         getLenis().on("scroll", update);
 
@@ -122,7 +121,6 @@
 
         --compact: ${compact.current};
 
-        width: calc(100% - 16px * var(--compact));
     `}
 >
     <nav>
@@ -165,14 +163,17 @@
 <style>
     header {
         position: fixed;
-        top: 0;
+        inset: 0 0 auto;
         z-index: 100;
 
+        width: calc(100% - 64px * var(--compact));
+        margin-inline: auto;
+
         box-sizing: border-box;
-        margin: 0;
         padding: 1rem;
 
         pointer-events: none;
+        transform-origin: center;
     }
 
     nav {

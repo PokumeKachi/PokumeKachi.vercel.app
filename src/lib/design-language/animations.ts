@@ -12,13 +12,13 @@ const defaultPage = {
 };
 
 const offscreenTop = {
-    transform: "translateY(50vh)",
+    transform: "translateY(50dvh)",
     opacity: 0,
     filter: "blur(16px)",
 };
 
 const offscreenBottom = {
-    transform: "translateY(-50vh)",
+    transform: "translateY(-50dvh)",
     opacity: 0,
     filter: "blur(16px)",
 };

@@ -1,16 +1,14 @@
 <script lang="ts">
-    import "@picocss/pico/css/pico.css";
-    import "./layout.css";
+    import "../layout.css";
+
+    import { onMount, onNavigate } from "$lib";
 
     import { acquireScrollLock } from "$lib/behaviors/ScrollLock.svelte";
-
-    import { onMount } from "svelte";
-    import { onNavigate } from "$app/navigation";
-
     import { pageAnimation, headerAnimation } from "$lib/design-language";
     import getLenis from "$lib/singletons/lenis";
 
     import Header from "./Header.svelte";
+    import ScrollProgress from "./ScrollProgress.svelte";
 
     let { children } = $props();
 
@@ -18,41 +16,53 @@
     let headerHeight = $state(0);
     let introStarted = $state(false);
 
+    let pageAnimationInstance: Animation | undefined;
+
     $effect(() => {
         document.documentElement.classList.toggle("navigating", navigating);
     });
 
-    let pageAnimationInstance: Animation | undefined;
-
     function animatePage(
         animation: (typeof pageAnimation)[keyof typeof pageAnimation],
-    ) {
+    ): Animation | undefined {
         const page = document.querySelector<HTMLElement>("#page");
         if (!page) return;
 
         pageAnimationInstance?.cancel();
-        pageAnimationInstance = page.animate(
+
+        return (pageAnimationInstance = page.animate(
             animation.keyframes,
             animation.options,
-        );
+        ));
+    }
 
-        return pageAnimationInstance;
+    function afterAnimation(
+        animation: Animation | undefined,
+        callback: () => void,
+    ) {
+        if (animation) {
+            animation.finished.then(callback, callback);
+        } else {
+            callback();
+        }
     }
 
     onMount(() => {
         getLenis();
+
         animatePage(pageAnimation.intro);
+
         document
             .querySelector<HTMLElement>("header")
             ?.animate(headerAnimation.keyframes, headerAnimation.options);
-        requestAnimationFrame(() => (introStarted = true));
+
+        requestAnimationFrame(() => {
+            introStarted = true;
+        });
     });
 
-    onNavigate((navigation) => {
-        const from = navigation.from?.url.pathname;
-        const to = navigation.to?.url.pathname;
-
-        if (to === from) return;
+    onNavigate(({ from, to }) => {
+        if (from?.url.pathname === to?.url.pathname) return;
 
         navigating = true;
 
@@ -70,29 +80,28 @@
                 const enter = animatePage(pageAnimation.enter);
 
                 navigating = false;
-
-                if (enter) {
-                    enter.finished.then(release, release);
-                } else {
-                    release();
-                }
+                afterAnimation(enter, release);
             },
-            (err) => {
+            (error) => {
                 navigating = false;
                 release();
 
-                if ((err as Error)?.name !== "AbortError") {
-                    console.error(err);
+                if ((error as Error)?.name !== "AbortError") {
+                    console.error(error);
                 }
             },
         );
     });
 </script>
 
-<div class:loaded={introStarted} class="before-page-load-overlay"></div>
+<div class:loaded={introStarted} id="preload-overlay"></div>
+
+<ScrollProgress />
 <Header bind:headerHeight {navigating} />
-<div id="header-spacer" style={`height: ${headerHeight}px`}></div>
-<div id="page" style={`--remaining-height: calc(100dvh - ${headerHeight}px)`}>
+
+<div id="page" style={`--header-height: ${headerHeight}px`}>
+    <div id="header-spacer"></div>
+
     <div id="page-content">
         {@render children()}
     </div>
@@ -100,25 +109,28 @@
 
 <style>
     #page {
-        height: var(--remaining-height);
+        min-height: 100dvh;
         overflow: visible;
         transform-origin: center;
     }
 
-    #page-content {
-        min-height: 100%;
+    #header-spacer {
+        height: var(--header-height);
     }
 
-    .before-page-load-overlay {
+    #page-content {
+        min-height: calc(100dvh - var(--header-height));
+    }
+
+    #preload-overlay {
         position: fixed;
         inset: 0;
         z-index: 9999;
 
         background: var(--pico-background-color);
-        pointer-events: auto;
     }
 
-    .before-page-load-overlay.loaded {
+    #preload-overlay.loaded {
         display: none;
     }
 </style>

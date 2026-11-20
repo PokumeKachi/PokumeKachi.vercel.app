@@ -113,7 +113,7 @@
     .container {
         width: min(100% - 2rem, 52rem);
         margin-inline: auto;
-        padding-block: clamp(3rem, 8vw, 7rem);
+        padding-block: clamp(3rem, 8dvw, 7rem);
     }
 
     .page-header {
@@ -130,7 +130,7 @@
 
     h1 {
         margin: 0;
-        font-size: clamp(2.5rem, 7vw, 4rem);
+        font-size: clamp(2.5rem, 7dvw, 4rem);
         line-height: 1.1;
         letter-spacing: -0.05em;
     }
@@ -148,7 +148,7 @@
 
     .post {
         min-width: 0;
-        padding: clamp(1.25rem, 4vw, 2rem);
+        padding: clamp(1.25rem, 4dvw, 2rem);
         border: 1px solid var(--border-color, rgb(128 128 128 / 25%));
         border-radius: 1.25rem;
         background: var(--card-background, transparent);
@@ -168,7 +168,7 @@
 
     .post-header h2 {
         margin: 0;
-        font-size: clamp(1.5rem, 4vw, 2rem);
+        font-size: clamp(1.5rem, 4dvw, 2rem);
         line-height: 1.3;
         letter-spacing: -0.035em;
     }

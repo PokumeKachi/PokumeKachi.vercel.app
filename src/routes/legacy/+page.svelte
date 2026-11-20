@@ -362,12 +362,12 @@
         display: flex;
         flex-wrap: wrap;
         align-items: center;
-        gap: clamp(1rem, 3vw, 2rem);
+        gap: clamp(1rem, 3dvw, 2rem);
     }
 
     .lang-row a {
         display: block;
-        width: clamp(64px, 15vw, 160px);
+        width: clamp(64px, 15dvw, 160px);
         aspect-ratio: 1;
     }
 
