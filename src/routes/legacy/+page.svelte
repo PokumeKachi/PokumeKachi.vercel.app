@@ -1,6 +1,4 @@
 <script lang="ts">
-    import ScrollProgress from "$lib/components/ScrollProgress.svelte";
-
     const languages = [
         {
             name: "C++",
@@ -36,7 +34,6 @@
 </script>
 
 <main>
-    <ScrollProgress />
     <section>
         <h2>whoiam</h2>
 
