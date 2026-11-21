@@ -1,4 +1,4 @@
-<script lang="ts">
+<script module lang="ts">
     import "../layout.css";
 
     import { onMount, onNavigate } from "$lib";
@@ -9,7 +9,9 @@
 
     import Header from "./Header.svelte";
     import ScrollProgress from "./ScrollProgress.svelte";
+</script>
 
+<script lang="ts">
     let { children } = $props();
 
     let navigating = $state(false);
@@ -20,16 +22,20 @@
 
     $effect(() => {
         document.documentElement.classList.toggle("navigating", navigating);
+        document.documentElement.style.setProperty(
+            "--header-height",
+            `${headerHeight}px`,
+        );
     });
 
-    function animatePage(
-        animation: (typeof pageAnimation)[keyof typeof pageAnimation],
-    ): Animation | undefined {
+    function animatePage(animation: {
+        keyframes: Keyframe[];
+        options: KeyframeAnimationOptions;
+    }) {
         const page = document.querySelector<HTMLElement>("#page");
         if (!page) return;
 
         pageAnimationInstance?.cancel();
-
         return (pageAnimationInstance = page.animate(
             animation.keyframes,
             animation.options,
@@ -38,27 +44,21 @@
 
     function afterAnimation(
         animation: Animation | undefined,
-        callback: () => void,
+        done: () => void,
     ) {
-        if (animation) {
-            animation.finished.then(callback, callback);
-        } else {
-            callback();
-        }
+        if (animation) animation.finished.then(done, done);
+        else done();
     }
 
     onMount(() => {
         getLenis();
 
         animatePage(pageAnimation.intro);
-
         document
-            .querySelector<HTMLElement>("header")
+            .querySelector("header")
             ?.animate(headerAnimation.keyframes, headerAnimation.options);
 
-        requestAnimationFrame(() => {
-            introStarted = true;
-        });
+        requestAnimationFrame(() => (introStarted = true));
     });
 
     onNavigate(({ from, to }) => {
@@ -77,10 +77,8 @@
 
         return exit.finished.then(
             () => () => {
-                const enter = animatePage(pageAnimation.enter);
-
                 navigating = false;
-                afterAnimation(enter, release);
+                afterAnimation(animatePage(pageAnimation.enter), release);
             },
             (error) => {
                 navigating = false;
@@ -99,9 +97,8 @@
 <ScrollProgress />
 <Header bind:headerHeight {navigating} />
 
-<div id="page" style={`--header-height: ${headerHeight}px`}>
+<div id="page">
     <div id="header-spacer"></div>
-
     <div id="page-content">
         {@render children()}
     </div>
@@ -109,7 +106,6 @@
 
 <style>
     #page {
-        min-height: 100dvh;
         overflow: visible;
         transform-origin: center;
     }
@@ -126,7 +122,6 @@
         position: fixed;
         inset: 0;
         z-index: 9999;
-
         background: var(--pico-background-color);
     }
 

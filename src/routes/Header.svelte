@@ -11,28 +11,25 @@
     import MorphText from "$lib/components/MorphText.svelte";
     import { PATH_TITLES, HEADER_LINKS } from "$lib/content/sitemap";
 
-    const entranceDuration = PAGE_TRANSITION_DURATION * 2;
-
-    type Props = {
+    let {
+        navigating,
+        headerHeight = $bindable(0),
+    }: {
         navigating: boolean;
         headerHeight?: number;
-    };
-
-    let { navigating, headerHeight = $bindable(0) }: Props = $props();
+    } = $props();
 
     let activePath: string = $state(page.url.pathname);
+    let morphText: { morphTo: (text: string) => void } | undefined;
 
-    let morphText:
-        | {
-              morphTo: (text: string) => void;
-          }
-        | undefined;
+    const compact = new Spring(0, SPRING);
+    const entranceDuration = PAGE_TRANSITION_DURATION * 2;
 
     $effect(() => {
         activePath = page.url.pathname;
     });
 
-    export function morphTitle(pathname: string) {
+    function morphTitle(pathname: string) {
         morphText?.morphTo(PATH_TITLES[pathname] ?? PATH_TITLES["/"]);
     }
 
@@ -55,73 +52,42 @@
         morphTitle(href);
     }
 
-    const compact = new Spring(0, SPRING);
+    const blur = $derived(SURFACE_BLUR * compact.current);
+    const saturate = $derived(100 + 80 * compact.current);
 
     const morphBackgroundStyle = $derived(`
-        background: color-mix(
-            in srgb,
-            var(--pico-card-background-color)
-            ${60 * compact.current}%,
-            transparent
-        );
-
-        -webkit-backdrop-filter:
-            blur(${SURFACE_BLUR * compact.current}px)
-            saturate(${100 + 80 * compact.current}%);
-
-        backdrop-filter:
-            blur(${SURFACE_BLUR * compact.current}px)
-            saturate(${100 + 80 * compact.current}%);
-
-        border-color: color-mix(
-            in srgb,
-            var(--pico-muted-border-color)
-            ${70 * compact.current}%,
-            transparent
-        );
-
+        background: color-mix(in srgb, var(--pico-card-background-color) ${60 * compact.current}%, transparent);
+        -webkit-backdrop-filter: blur(${blur}px) saturate(${saturate}%);
+        backdrop-filter: blur(${blur}px) saturate(${saturate}%);
+        border-color: color-mix(in srgb, var(--pico-muted-border-color) ${70 * compact.current}%, transparent);
         box-shadow:
-            0 ${8 * compact.current}px
-            ${28 * compact.current}px
-            color-mix(
-                in srgb,
-                var(--pico-color)
-                ${8 * compact.current}%,
-                transparent
-            ),
+            0 ${8 * compact.current}px ${28 * compact.current}px
+                color-mix(in srgb, var(--pico-color) ${8 * compact.current}%, transparent),
             inset 0 1px 0
-            color-mix(
-                in srgb,
-                var(--pico-background-color)
-                ${12 * compact.current}%,
-                transparent
-            );
+                color-mix(in srgb, var(--pico-background-color) ${12 * compact.current}%, transparent);
     `);
 
     onMount(() => {
         morphTitle(page.url.pathname);
 
+        const lenis = getLenis();
         const update = () => {
-            compact.target = (getLenis().scroll <= headerHeight && getLenis().targetScroll <= 2) ? 0 : 1;
+            compact.target =
+                lenis.scroll <= headerHeight && lenis.targetScroll <= 2 ? 0 : 1;
         };
 
         update();
+        lenis.on("scroll", update);
 
-        getLenis().on("scroll", update);
-
-        return () => getLenis().off("scroll", update);
+        return () => lenis.off("scroll", update);
     });
 </script>
 
 <header
     bind:clientHeight={headerHeight}
-    style={`
-        --transition-duration: ${entranceDuration}ms;
-        --radius: ${RADIUS}rem;
-
-        --compact: ${compact.current};
-
-    `}
+    style:--transition-duration={`${entranceDuration}ms`}
+    style:--radius={`${RADIUS}rem`}
+    style:--compact={compact.current}
 >
     <nav>
         <ul id="nav-title">
@@ -135,27 +101,25 @@
             </li>
         </ul>
 
-        <ul id="nav-links">
-            <div class="cluster-background" style={morphBackgroundStyle}>
-                {#each HEADER_LINKS as [name, href], i}
-                    <li
-                        style:animation-delay={`${
-                            PAGE_TRANSITION_DURATION + i * STAGGER_INTERVAL
-                        }ms`}
+        <ul
+            id="nav-links"
+            class="cluster-background"
+            style={morphBackgroundStyle}
+        >
+            {#each HEADER_LINKS as [name, href], i}
+                <li
+                    style:animation-delay={`${PAGE_TRANSITION_DURATION + i * STAGGER_INTERVAL}ms`}
+                >
+                    <a
+                        {href}
+                        class:active={activePath === href}
+                        aria-current={activePath === href ? "page" : undefined}
+                        onclick={(event) => navigate(href, event)}
                     >
-                        <a
-                            {href}
-                            class:active={activePath === href}
-                            aria-current={activePath === href
-                                ? "page"
-                                : undefined}
-                            onclick={(event) => navigate(href, event)}
-                        >
-                            {name}
-                        </a>
-                    </li>
-                {/each}
-            </div>
+                        {name}
+                    </a>
+                </li>
+            {/each}
         </ul>
     </nav>
 </header>
@@ -168,12 +132,10 @@
 
         width: calc(100% - 64px * var(--compact));
         margin-inline: auto;
-
         box-sizing: border-box;
         padding: 1rem;
 
         pointer-events: none;
-        transform-origin: center;
     }
 
     nav {
@@ -182,7 +144,6 @@
         justify-content: space-between;
 
         min-width: 0;
-        gap: 0;
     }
 
     #nav-title {
@@ -192,7 +153,6 @@
         min-width: 0;
         margin: 0;
         padding: 0;
-
         list-style: none;
     }
 
@@ -204,14 +164,19 @@
     }
 
     .cluster-background {
+        box-sizing: border-box;
         width: fit-content;
         max-width: 100%;
         min-width: 0;
-        box-sizing: border-box;
 
         padding: 0.25rem 0.75rem;
         border: 2px solid transparent;
         border-radius: var(--radius);
+    }
+
+    #nav-links {
+        margin: 0;
+        list-style: none;
     }
 
     li {
@@ -251,10 +216,7 @@
     #nav-links a::after {
         content: "";
         position: absolute;
-
-        left: 0;
-        right: 0;
-        bottom: -0.25rem;
+        inset: auto 0 -0.25rem;
 
         height: 2px;
 
@@ -272,7 +234,6 @@
     }
 
     .cluster-background,
-    #nav-links,
     #nav-links a,
     #nav-links a::after {
         border-radius: var(--radius);
