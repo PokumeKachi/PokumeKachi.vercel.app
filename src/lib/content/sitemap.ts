@@ -5,7 +5,7 @@ export const PATH_TITLES: Record<string, string> = {
     "/contact": "Communication, simplified.",
     "/projects/loimon": "The optimally distributed knowledge system",
     "/projects/ybiau": "Your Brain In ASCII / UTF-8",
-} as const;
+};
 
 export const HEADER_LINKS = [
     ["Home", "/"],
