@@ -1,11 +1,11 @@
 <script lang="ts">
     import ScrollLock from "$lib/behaviors/ScrollLock.svelte";
 
-    interface Props {
+    let {
+        url = "https://example.com",
+    }: {
         url?: string;
-    }
-
-    let { url = "https://example.com" }: Props = $props();
+    } = $props();
 
     const embedUrl = $derived.by(() => {
         try {
@@ -73,10 +73,7 @@
         flex-direction: column;
 
         width: 100%;
-        height: var(
-            --remaining-height,
-            calc(100dvh - var(--header-height, 0px))
-        );
+        height: var(--remaining-height);
         min-height: 0;
 
         overflow: hidden;
