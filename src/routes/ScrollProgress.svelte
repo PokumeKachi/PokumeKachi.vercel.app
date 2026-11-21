@@ -34,14 +34,27 @@
 <style>
     #scroll-progress {
         position: fixed;
-        inset: var(--header-height) 0 auto;
+        inset: 0 0 auto;
         z-index: 9999;
 
         width: 100%;
-        background: var(--pico-primary);
+
+        background: linear-gradient(
+            90deg,
+            var(--pico-primary-hover) 0%,
+            var(--pico-primary) 55%,
+            var(--pico-primary-background) 100%
+        );
+
+        border-radius: 0 var(--pico-border-radius) var(--pico-border-radius) 0;
+
+        box-shadow:
+            0 0 0.35rem var(--pico-primary-focus),
+            0 0 0.75rem var(--pico-primary-underline);
 
         transform: scaleX(var(--progress));
         transform-origin: left;
+        will-change: transform;
         pointer-events: none;
     }
 </style>
