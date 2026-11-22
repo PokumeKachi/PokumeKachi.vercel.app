@@ -1,73 +1,19 @@
 <script lang="ts">
-    import { marked } from "marked";
+    import type { PageData } from "./$types";
 
-    type Post = {
-        slug: string;
-        title: string;
-        date: string;
-        description: string;
-        html: string;
-    };
+    let { data }: { data: PageData } = $props();
 
-    const markdownFiles = import.meta.glob("$lib/content/blogs/*.md", {
-        eager: true,
-        query: "?raw",
-        import: "default",
-    }) as Record<string, string>;
-
-    function readField(frontmatter: string, key: string): string {
-        const match = frontmatter.match(
-            new RegExp(`^${key}:\\s*(.*?)\\s*$`, "m"),
-        );
-
-        return match?.[1]?.replace(/^(['"])(.*)\1$/, "$2").trim() ?? "";
-    }
-
-    function createPost(path: string, raw: string): Post {
-        const slug = path.split("/").pop()?.replace(/\.md$/, "") ?? "untitled";
-
-        const frontmatterMatch = raw.match(
-            /^---\s*\r?\n([\s\S]*?)\r?\n---\s*(?:\r?\n|$)/,
-        );
-
-        const frontmatter = frontmatterMatch?.[1] ?? "";
-        const content = raw.slice(frontmatterMatch?.[0].length ?? 0).trim();
-
-        const headingMatch = content.match(/^#\s+(.+?)\s*#*\s*(?:\r?\n|$)/);
-
-        const title =
-            readField(frontmatter, "title") ||
-            headingMatch?.[1] ||
-            slug.replace(/[-_]/g, " ");
-
-        const body = content.replace(/^#\s+.+(?:\r?\n)+/, "").trim();
-
-        return {
-            slug,
-            title,
-            date: readField(frontmatter, "date"),
-            description: readField(frontmatter, "description"),
-            html: marked.parse(body, { async: false }) as string,
-        };
-    }
-
-    const posts: Post[] = Object.entries(markdownFiles)
-        .map(([path, raw]) => createPost(path, raw))
-        .sort((a, b) => {
-            if (!a.date) return 1;
-            if (!b.date) return -1;
-            return b.date.localeCompare(a.date);
-        });
+    const dateFormatter = new Intl.DateTimeFormat("en", {
+        dateStyle: "medium",
+        timeZone: "UTC",
+    });
 
     function formatDate(date: string): string {
         const parsed = new Date(`${date}T00:00:00Z`);
 
         if (Number.isNaN(parsed.getTime())) return date;
 
-        return new Intl.DateTimeFormat("en", {
-            dateStyle: "medium",
-            timeZone: "UTC",
-        }).format(parsed);
+        return dateFormatter.format(parsed);
     }
 </script>
 
@@ -78,11 +24,11 @@
         <p class="intro">Thoughts, projects, and things I've learned.</p>
     </header>
 
-    {#if posts.length === 0}
+    {#if data.posts.length === 0}
         <p class="empty">No posts yet.</p>
     {:else}
         <section class="posts" aria-label="Blog posts">
-            {#each posts as post (post.slug)}
+            {#each data.posts as post (post.slug)}
                 <article class="post">
                     <header class="post-header">
                         {#if post.date}
