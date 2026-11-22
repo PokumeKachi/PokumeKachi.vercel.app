@@ -20,6 +20,7 @@
 
     let pageAnimationInstance: Animation | undefined;
 
+
     $effect(() => {
         document.documentElement.classList.toggle("navigating", navigating);
         document.documentElement.style.setProperty(

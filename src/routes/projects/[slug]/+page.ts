@@ -1,8 +1,16 @@
 import { error } from "@sveltejs/kit";
 
-import { getProject } from "$lib/content/projects";
+import {
+    getProject,
+    projects,
+} from "$lib/content/projects";
 
-import type { PageLoad } from "./$types";
+import type { EntryGenerator, PageLoad } from "./$types";
+
+export const prerender = 'auto';
+
+export const entries: EntryGenerator = () =>
+    projects.map(({ slug }) => ({ slug }));
 
 export const load: PageLoad = ({ params }) => {
     const project = getProject(params.slug);
