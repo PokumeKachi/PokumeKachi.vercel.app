@@ -135,6 +135,9 @@
         box-sizing: border-box;
         padding: 1rem;
 
+        container-type: inline-size;
+        container-name: site-header;
+
         pointer-events: none;
     }
 
@@ -189,6 +192,15 @@
             opacity: 0;
             transform: translateY(-0.75rem);
         }
+    }
+
+    #nav-links li:first-child a {
+        color: var(--pico-secondary);
+    }
+
+    #nav-links li:first-child a:hover {
+        color: var(--pico-secondary-hover);
+        border-color: var(--pico-secondary-hover-border);
     }
 
     #nav-links a {

@@ -1,6 +1,4 @@
 <script lang="ts">
-    import ScrollLock from "$lib/behaviors/ScrollLock.svelte";
-
     let {
         url = "https://example.com",
     }: {
@@ -25,8 +23,6 @@
         }
     });
 </script>
-
-<ScrollLock />
 
 <div class="iframe-wrapper">
     {#if embedUrl}
@@ -57,8 +53,6 @@
         <iframe
             src={embedUrl.href}
             title={`Embedded content from ${embedUrl.hostname}`}
-            sandbox="allow-scripts allow-forms"
-            allow="encrypted-media; picture-in-picture"
         ></iframe>
     {:else}
         <p class="embed-error" role="alert">
