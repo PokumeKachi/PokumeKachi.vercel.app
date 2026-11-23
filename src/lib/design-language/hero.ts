@@ -6,7 +6,7 @@ export const TILT_MAX = 5;
 export const SCENE = {
     maxPixelRatio: 1.5,
     pointCount: 140,
-    opacity: 0.34,
-    pointOpacity: 0.45,
+    opacity: 0.2,
+    pointOpacity: 0.3,
     spin: Math.PI * 1.6,
 } as const;

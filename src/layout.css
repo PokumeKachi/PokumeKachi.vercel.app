@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+@property --parallax {
+    syntax: "<number>";
+    inherits: false;
+    initial-value: 0;
+}
+
 @font-face {
     font-family: "Geist";
     src: url("/fonts/Geist-Bold.ttf") format("truetype");

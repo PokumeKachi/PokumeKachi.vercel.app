@@ -76,8 +76,24 @@
         padding-block: clamp(5rem, 16vh, 10rem);
 
         transform-style: preserve-3d;
-        transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+        transform: translateY(calc(var(--parallax, 0) * -3rem))
+            rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
         transition: transform 320ms var(--ui-ease);
+    }
+
+    @supports (animation-timeline: scroll()) {
+        .content {
+            animation: hero-parallax linear both;
+            animation-timeline: scroll(root block);
+            animation-range: 0 45vh;
+        }
+    }
+
+    @keyframes hero-parallax {
+        to {
+            --parallax: 1;
+            opacity: 0.4;
+        }
     }
 
     .eyebrow {

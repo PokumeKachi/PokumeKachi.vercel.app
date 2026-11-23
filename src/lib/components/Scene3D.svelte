@@ -69,10 +69,10 @@
                 root.add(line);
             };
 
-            addShape(new THREE.IcosahedronGeometry(1.7, 1), -3.4, 1.6, -1);
-            addShape(new THREE.TorusGeometry(1.2, 0.4, 6, 14), 3.2, -1.2, 0);
-            addShape(new THREE.OctahedronGeometry(1.1, 0), 2.4, 2.4, -2);
-            addShape(new THREE.BoxGeometry(1.6, 1.6, 1.6), -2.6, -2.2, -1);
+            addShape(new THREE.IcosahedronGeometry(1.7, 1), -4.8, 2.6, -1);
+            addShape(new THREE.TorusGeometry(1.2, 0.4, 6, 14), 4.4, -1.8, 0);
+            addShape(new THREE.OctahedronGeometry(1.1, 0), 3.4, 2.8, -2);
+            addShape(new THREE.BoxGeometry(1.6, 1.6, 1.6), -4.2, -3.2, -1);
 
             const positions = new Float32Array(SCENE.pointCount * 3);
             for (let i = 0; i < positions.length; i += 3) {
@@ -186,11 +186,12 @@
 <div class="scene3d" bind:this={host} aria-hidden="true"></div>
 
 <style>
+    /* Fixed to the viewport and outside route containers so the scene is
+       never clipped by a page wrapper or its transform/overflow. */
     .scene3d {
-        position: absolute;
+        position: fixed;
         inset: 0;
-        z-index: 0;
-        overflow: hidden;
+        z-index: -1;
         pointer-events: none;
         opacity: 0.9;
     }

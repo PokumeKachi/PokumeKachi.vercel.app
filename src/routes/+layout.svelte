@@ -1,9 +1,10 @@
 <script module lang="ts">
     import "../layout.css";
 
-    import { onMount, onNavigate } from "$lib";
+    import { onMount, onNavigate, page } from "$lib";
 
     import { acquireScrollLock } from "$lib/behaviors/ScrollLock.svelte";
+    import Scene3D from "$lib/components/Scene3D.svelte";
     import {
         pageAnimation,
         headerAnimation,
@@ -100,6 +101,10 @@
 <svelte:head>
     {@html `<style>${themeStyle}</style>`}
 </svelte:head>
+
+{#if page.url.pathname === "/"}
+    <Scene3D />
+{/if}
 
 <div class:loaded={introStarted} id="preload-overlay"></div>
 
