@@ -242,4 +242,32 @@
     a {
         pointer-events: auto;
     }
+
+    @container site-header (max-width: 42rem) {
+        nav {
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #nav-title {
+            flex: none;
+            width: 100%;
+        }
+
+        #nav-title > li {
+            display: flex;
+            justify-content: center;
+        }
+
+        #nav-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+
+            width: fit-content;
+            max-width: 100%;
+            margin-inline: auto;
+        }
+    }
 </style>
