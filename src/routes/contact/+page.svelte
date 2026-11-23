@@ -32,8 +32,10 @@
         {#each links as { name, icon, url }}
             <li>
                 <a href={url} aria-label={`Visit ${name}`}>
-                    <img class="themed-image" src={icon} alt="" />
-                    <span>{name}</span>
+                    <span class="badge">
+                        <img class="themed-image" src={icon} alt="" />
+                    </span>
+                    <span class="label">{name}</span>
                 </a>
             </li>
         {/each}
@@ -42,7 +44,7 @@
 
 <style>
     .intro {
-        margin-block: clamp(2.5rem, 8vh, 5rem) 2.5rem;
+        margin-block: clamp(2.5rem, 8vh, 5rem) 3rem;
         text-align: center;
     }
 
@@ -65,7 +67,7 @@
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
-        gap: 1.25rem;
+        gap: 1.5rem;
         padding: 0;
     }
 
@@ -77,9 +79,9 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 0.6rem;
-        width: 5rem;
-        padding: 0.75rem 0.25rem;
+        gap: 0.75rem;
+        width: 6.5rem;
+        padding: 1rem 0.5rem;
 
         border: 1px solid transparent;
         border-radius: var(--ui-radius);
@@ -87,30 +89,53 @@
         text-decoration: none;
 
         transition:
-            transform var(--ui-fast) var(--ui-ease),
             border-color var(--ui-fast) ease,
             background-color var(--ui-fast) ease;
     }
 
-    span {
-        font-size: 0.8rem;
-        font-weight: 600;
-        opacity: 0.7;
+    .badge {
+        display: grid;
+        place-items: center;
+        width: 4.5rem;
+        height: 4.5rem;
+
+        border: 1px solid var(--pico-border-color);
+        border-radius: 50%;
+        background: var(--pico-card-background-color);
+        box-shadow: var(--ui-shadow);
+
+        transition:
+            transform var(--ui-fast) var(--ui-ease),
+            border-color var(--ui-fast) ease,
+            box-shadow var(--ui-fast) ease;
     }
 
     img {
-        width: 3rem;
-        height: 3rem;
+        width: 2.25rem;
+        height: 2.25rem;
+    }
+
+    .label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        opacity: 0.65;
+        transition: opacity var(--ui-fast) ease;
     }
 
     @media (hover: hover) {
         a:hover {
-            transform: translateY(-3px);
             border-color: var(--pico-border-color);
             background: var(--pico-card-background-color);
         }
 
-        a:hover span {
+        a:hover .badge {
+            transform: translateY(-4px);
+            border-color: var(--pico-primary);
+            box-shadow: 0 12px 28px -12px
+                color-mix(in oklab, var(--pico-primary) 55%, transparent);
+        }
+
+        a:hover .label {
             opacity: 1;
         }
     }
