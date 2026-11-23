@@ -1,18 +1,36 @@
 @import "tailwindcss";
 
-/* ---------- Design tokens ---------- */
+@font-face {
+    font-family: "Geist";
+    src: url("/fonts/Geist-Bold.ttf") format("truetype");
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
 :root {
-    --ui-radius: 0.85rem;
-    --ui-radius-sm: 0.5rem;
+    color-scheme: light dark;
+
+    /* Mirrored here as fallbacks; canonical values come from
+       $lib/design-language/theme.ts via the root layout. */
+    --ui-radius: 0.75rem;
+    --ui-radius-sm: 0.375rem;
     --ui-ease: cubic-bezier(0.22, 1, 0.36, 1);
     --ui-fast: 160ms;
-    --ui-shadow: 0 1px 2px rgb(0 0 0 / 6%), 0 8px 24px -16px rgb(0 0 0 / 30%);
-    --ui-shadow-lift: 0 12px 32px -16px rgb(0 0 0 / 38%);
+    --ui-sheen-duration: 650ms;
+    --ui-tilt: 5deg;
 
-    /* Tints monochrome artwork to the primary accent (light theme). */
+    --ui-shadow: light-dark(
+        0 1px 2px rgb(0 0 0 / 6%),
+        0 10px 30px -18px rgb(0 0 0 / 65%)
+    );
+    --ui-shadow-lift: light-dark(
+        0 12px 30px -14px rgb(0 0 0 / 18%),
+        0 16px 38px -18px rgb(0 0 0 / 75%)
+    );
+
     --theme-filter: brightness(0) saturate(100%) invert(26%) sepia(91%)
         saturate(1340%) hue-rotate(178deg) brightness(96%) contrast(98%);
-    /* Inverted tint for use on accent-filled surfaces. */
     --theme-filter-inverse: brightness(0) invert(1);
 }
 
@@ -25,23 +43,22 @@ html {
     background-color: var(--pico-background-color);
 }
 
-/* Viewport-anchored glow: does not shift when route content changes height. */
+/* Viewport anchored so route height changes never shift the glow. */
 body::before {
     content: "";
     position: fixed;
     inset: 0;
     z-index: -1;
     pointer-events: none;
-
     background-image:
         radial-gradient(
             46rem 30rem at 10% -10%,
-            color-mix(in oklab, var(--pico-primary) 13%, transparent),
+            color-mix(in oklab, var(--pico-primary) var(--ui-glow, 13%), transparent),
             transparent 70%
         ),
         radial-gradient(
             40rem 28rem at 110% 0%,
-            color-mix(in oklab, var(--pico-primary) 9%, transparent),
+            color-mix(in oklab, var(--pico-primary) var(--ui-glow-alt, 9%), transparent),
             transparent 70%
         );
 }
@@ -57,7 +74,7 @@ body {
     text-rendering: optimizeLegibility;
 }
 
-/* ---------- Typography & links ---------- */
+/* ---------- Shared typography ---------- */
 h1,
 h2,
 h3,
@@ -65,11 +82,26 @@ h4,
 h5,
 h6 {
     text-wrap: balance;
-    letter-spacing: -0.025em;
 }
 
 p {
     text-wrap: pretty;
+}
+
+.eyebrow {
+    margin: 0 0 0.75rem;
+    color: var(--pico-muted-color);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+}
+
+.page-title {
+    margin: 0;
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    line-height: 1.1;
+    letter-spacing: -0.04em;
 }
 
 a {
@@ -109,7 +141,7 @@ blockquote {
     border-radius: var(--ui-radius-sm);
 }
 
-/* ---------- Markdown content ---------- */
+/* ---------- Markdown ---------- */
 .markdown-content {
     line-height: 1.8;
     overflow-wrap: anywhere;
@@ -145,15 +177,15 @@ blockquote {
     max-width: 100%;
     height: auto;
     margin-block: 1.5rem;
-    border-radius: 0.75rem;
+    border-radius: var(--ui-radius);
 }
 
 .markdown-content pre {
     max-width: 100%;
     padding: 1rem;
     overflow-x: auto;
-    border-radius: 0.75rem;
-    background: var(--code-background, rgb(128 128 128 / 12%));
+    border-radius: var(--ui-radius-sm);
+    background: var(--pico-code-background-color);
 }
 
 .markdown-content code {
@@ -164,8 +196,8 @@ blockquote {
 .markdown-content blockquote {
     margin-inline: 0;
     padding-left: 1rem;
-    border-left: 3px solid var(--pico-muted-border-color);
-    opacity: 0.8;
+    border-left: 3px solid var(--pico-primary);
+    opacity: 0.85;
 }
 
 .markdown-content table {
@@ -221,24 +253,20 @@ img.themed-image {
 }
 
 li:focus-within img {
-    transform: scale(1.12) translateY(-0.15rem);
-    filter: var(--theme-filter) drop-shadow(0 0 0.5rem currentColor);
+    transform: scale(1.08);
 }
 
 @media (hover: hover) {
     li:hover img {
-        transform: scale(1.12) translateY(-0.15rem);
-        filter: var(--theme-filter) drop-shadow(0 0 0.5rem currentColor);
+        transform: scale(1.08);
     }
 }
 
-/* ---------- Reusable motion ----------
-   Hover-only, transform/opacity based, and inert on touch/reduced-motion. */
+/* ---------- Motion utilities ---------- */
 .fx-tilt,
 .fx-flip,
 .fx-sheen {
     position: relative;
-    transform-style: preserve-3d;
     transition:
         transform 300ms var(--ui-ease),
         box-shadow var(--ui-fast) ease,
@@ -247,7 +275,6 @@ li:focus-within img {
 
 .fx-sheen {
     overflow: hidden;
-    isolation: isolate;
 }
 
 .fx-sheen::after {
@@ -256,31 +283,29 @@ li:focus-within img {
     inset: 0;
     z-index: 2;
     pointer-events: none;
-    /* currentColor keeps the sheen legible in both themes: dark text gets a
-       dark sweep on light cards, white text gets a light sweep on accent fills. */
     background: linear-gradient(
         110deg,
-        transparent 32%,
-        color-mix(in oklab, currentColor 18%, transparent) 50%,
-        transparent 68%
+        transparent 35%,
+        color-mix(in oklab, currentColor 14%, transparent) 50%,
+        transparent 65%
     );
     transform: translateX(-120%);
 }
 
 @media (hover: hover) {
     .fx-tilt:hover {
-        transform: perspective(800px) rotateX(5deg) rotateY(-5deg)
-            translateY(-4px);
+        transform: perspective(800px) rotateX(var(--ui-tilt)) rotateY(calc(var(--ui-tilt) * -1))
+            translateY(-3px);
         box-shadow: var(--ui-shadow-lift);
     }
 
     .fx-flip:hover {
-        transform: perspective(800px) rotateY(-9deg) translateY(-3px);
+        transform: perspective(800px) rotateY(calc(var(--ui-tilt) * -2));
     }
 
     .fx-sheen:hover::after {
         transform: translateX(120%);
-        transition: transform 650ms var(--ui-ease);
+        transition: transform var(--ui-sheen-duration) var(--ui-ease);
     }
 }
 
@@ -296,10 +321,9 @@ nav,
     user-select: none;
 }
 
-/* ---------- Themes & preferences ---------- */
+/* ---------- Theme & preferences ---------- */
 @media (prefers-color-scheme: dark) {
     :root {
-        /* Brighter accent tint for dark surfaces. */
         --theme-filter: brightness(0) saturate(100%) invert(61%) sepia(98%)
             saturate(1870%) hue-rotate(174deg) brightness(102%) contrast(101%);
         --theme-filter-inverse: brightness(0) invert(0.08);
@@ -314,11 +338,5 @@ nav,
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;
-    }
-}
-
-@supports (corner-shape: squircle) {
-    * {
-        corner-shape: squircle;
     }
 }

@@ -16,7 +16,7 @@
             {#if data.post.date}
                 <time datetime={data.post.date}>{data.post.dateLabel}</time>
             {/if}
-            <h1>{data.post.title}</h1>
+            <h1 class="page-title">{data.post.title}</h1>
             {#if data.post.description}
                 <p class="description">{data.post.description}</p>
             {/if}
@@ -65,13 +65,6 @@
         margin-bottom: 0.75rem;
         font-size: 0.8rem;
         opacity: 0.6;
-    }
-
-    h1 {
-        margin: 0;
-        font-size: clamp(2rem, 6dvw, 3.25rem);
-        line-height: 1.1;
-        letter-spacing: -0.05em;
     }
 
     .description {

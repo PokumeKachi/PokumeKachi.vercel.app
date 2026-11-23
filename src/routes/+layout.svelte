@@ -4,7 +4,11 @@
     import { onMount, onNavigate } from "$lib";
 
     import { acquireScrollLock } from "$lib/behaviors/ScrollLock.svelte";
-    import { pageAnimation, headerAnimation } from "$lib/design-language";
+    import {
+        pageAnimation,
+        headerAnimation,
+        themeStyle,
+    } from "$lib/design-language";
     import getLenis from "$lib/singletons/lenis";
 
     import Header from "./Header.svelte";
@@ -92,6 +96,10 @@
         );
     });
 </script>
+
+<svelte:head>
+    {@html `<style>${themeStyle}</style>`}
+</svelte:head>
 
 <div class:loaded={introStarted} id="preload-overlay"></div>
 

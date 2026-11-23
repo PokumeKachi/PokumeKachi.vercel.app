@@ -5,7 +5,7 @@
 <main class="container">
     <header class="intro">
         <p class="eyebrow">Selected work</p>
-        <h1>Things I've built.</h1>
+        <h1 class="page-title">Things I've built.</h1>
     </header>
 
     <ul class="grid">
@@ -25,21 +25,6 @@
 <style>
     .intro {
         margin-block: clamp(2.5rem, 8vh, 5rem) 2rem;
-    }
-
-    .eyebrow {
-        margin: 0 0 0.75rem;
-        font-size: 0.78rem;
-        font-weight: 600;
-        letter-spacing: 0.22em;
-        text-transform: uppercase;
-        opacity: 0.55;
-    }
-
-    h1 {
-        margin: 0;
-        font-size: clamp(2rem, 6vw, 3.5rem);
-        line-height: 1.1;
     }
 
     .grid {

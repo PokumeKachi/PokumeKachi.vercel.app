@@ -25,7 +25,7 @@
 <main class="container">
     <header class="intro">
         <p class="eyebrow">Say hello</p>
-        <h1>Let's connect.</h1>
+        <h1 class="page-title">Let's connect.</h1>
     </header>
 
     <ul>
@@ -46,21 +46,6 @@
     .intro {
         margin-block: clamp(2.5rem, 8vh, 5rem) 3rem;
         text-align: center;
-    }
-
-    .eyebrow {
-        margin: 0 0 0.75rem;
-        font-size: 0.78rem;
-        font-weight: 600;
-        letter-spacing: 0.22em;
-        text-transform: uppercase;
-        opacity: 0.55;
-    }
-
-    h1 {
-        margin: 0;
-        font-size: clamp(2rem, 6vw, 3.5rem);
-        line-height: 1.1;
     }
 
     ul {

@@ -119,7 +119,7 @@
         background: linear-gradient(
             90deg,
             transparent,
-            rgb(255 255 255 / 35%),
+            color-mix(in oklab, currentColor 32%, transparent),
             transparent
         );
 
@@ -161,7 +161,7 @@
         height: var(--endpoint-size);
 
         border-radius: 50%;
-        background: white;
+        background: var(--pico-primary-inverse);
 
         transform: translate(-50%, -50%);
 

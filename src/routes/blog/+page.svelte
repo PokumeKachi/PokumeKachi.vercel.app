@@ -11,7 +11,7 @@
 
     <header class="page-header">
         <p class="eyebrow">Writing & notes</p>
-        <h1>Blog</h1>
+        <h1 class="page-title">Blog</h1>
         <p class="intro">Thoughts, projects, and things I've learned.</p>
     </header>
 
@@ -58,22 +58,6 @@
 
     .page-header {
         margin-bottom: 3rem;
-    }
-
-    .eyebrow {
-        margin-bottom: 0.75rem;
-        font-size: 0.75rem;
-        font-weight: 700;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
-        opacity: 0.6;
-    }
-
-    h1 {
-        margin: 0;
-        font-size: clamp(2.5rem, 7dvw, 4rem);
-        line-height: 1.1;
-        letter-spacing: -0.05em;
     }
 
     .intro {

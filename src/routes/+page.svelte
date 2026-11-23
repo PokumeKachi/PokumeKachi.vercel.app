@@ -3,6 +3,7 @@
 
     let scene: HTMLElement;
     let hero: HTMLElement;
+    let title: HTMLElement;
 
     onMount(() => {
         if (
@@ -11,24 +12,25 @@
         )
             return;
 
-        scene.addEventListener("pointermove", tilt);
-        scene.addEventListener("pointerleave", level);
+        window.addEventListener("pointermove", tilt);
+        window.addEventListener("pointerleave", level);
 
         return () => {
-            scene.removeEventListener("pointermove", tilt);
-            scene.removeEventListener("pointerleave", level);
+            window.removeEventListener("pointermove", tilt);
+            window.removeEventListener("pointerleave", level);
         };
     });
 
     function tilt(event: PointerEvent) {
         if (!hero) return;
+        if (!title) return;
 
-        const box = hero.getBoundingClientRect();
-        const x = (event.clientX - box.left) / box.width - 0.5;
-        const y = (event.clientY - box.top) / box.height - 0.5;
+        const box = title.getBoundingClientRect();
+        const x = (event.clientX - box.left) - box.width * 0.5;
+        const y = (event.clientY - box.top) - box.height * 0.5;
 
-        hero.style.setProperty("--rx", `${(-y * 9).toFixed(2)}deg`);
-        hero.style.setProperty("--ry", `${(x * 9).toFixed(2)}deg`);
+        hero.style.setProperty("--rx", `${(-y * 0.005).toFixed(2)}deg`);
+        hero.style.setProperty("--ry", `${(x * 0.005).toFixed(2)}deg`);
     }
 
     function level() {
@@ -46,7 +48,7 @@
 
         <section class="hero" bind:this={hero}>
             <p class="eyebrow">Student · Developer · Vietnam</p>
-            <h1 data-text="Pokume Kachi">Pokume <span>Kachi</span></h1>
+            <h1 bind:this={title}>Pokume <span>Kachi</span></h1>
             <p class="lede">
                 I build clean, fast interfaces and small tools that make the web
                 a little more useful.
@@ -162,12 +164,7 @@
 
     .eyebrow {
         --z: 20px;
-        margin: 0 0 1.25rem;
-        font-size: 0.78rem;
-        font-weight: 600;
-        letter-spacing: 0.22em;
-        text-transform: uppercase;
-        opacity: 0.55;
+        margin-bottom: 1.25rem;
     }
 
     h1 {
@@ -178,27 +175,6 @@
         font-weight: 900;
         line-height: 0.95;
         letter-spacing: -0.06em;
-    }
-
-    /* Extruded ghost layers give the heading real depth. */
-    h1::before,
-    h1::after {
-        content: attr(data-text);
-        position: absolute;
-        inset: 0;
-        z-index: -1;
-        color: var(--pico-primary);
-        pointer-events: none;
-    }
-
-    h1::before {
-        transform: translateZ(-26px);
-        opacity: 0.14;
-    }
-
-    h1::after {
-        transform: translateZ(-52px);
-        opacity: 0.07;
     }
 
     h1 span {

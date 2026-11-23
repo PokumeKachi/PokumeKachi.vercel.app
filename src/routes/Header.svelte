@@ -194,15 +194,6 @@
         }
     }
 
-    #nav-links li:first-child a {
-        color: var(--pico-secondary);
-    }
-
-    #nav-links li:first-child a:hover {
-        color: var(--pico-secondary-hover);
-        border-color: var(--pico-secondary-hover-border);
-    }
-
     #nav-links a {
         position: relative;
         display: inline-flex;
