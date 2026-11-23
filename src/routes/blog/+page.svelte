@@ -1,5 +1,7 @@
 <script lang="ts">
-    import ScrollArt from "$lib/components/ScrollArt.svelte";
+    import PageIntro from "$lib/components/PageIntro.svelte";
+
+    import { pageCopy } from "$lib/content/pages";
 
     import type { PageData } from "./$types";
 
@@ -7,13 +9,9 @@
 </script>
 
 <main class="container">
-    <ScrollArt />
-
-    <header class="page-header">
-        <p class="eyebrow">Writing & notes</p>
-        <h1 class="page-title">Blog</h1>
-        <p class="intro">Thoughts, projects, and things I've learned.</p>
-    </header>
+    <div class="layer">
+        <PageIntro {...pageCopy.blog} />
+    </div>
 
     {#if data.posts.length === 0}
         <p class="empty">No posts yet.</p>
@@ -21,7 +19,7 @@
         <ul class="posts" aria-label="Blog posts">
             {#each data.posts as post (post.slug)}
                 <li>
-                    <a class="fx-tilt fx-sheen" href={`/blog/${post.slug}`}>
+                    <a class="fx-tilt" href={`/blog/${post.slug}`}>
                         <span class="meta">
                             {#if post.date}
                                 <time datetime={post.date}>{post.dateLabel}</time>
@@ -50,20 +48,10 @@
         padding-block: clamp(3rem, 8dvw, 7rem);
     }
 
-    .page-header,
+    .layer,
     .posts {
         position: relative;
         z-index: 1;
-    }
-
-    .page-header {
-        margin-bottom: 3rem;
-    }
-
-    .intro {
-        margin-top: 1rem;
-        opacity: 0.7;
-        line-height: 1.7;
     }
 
     .posts {

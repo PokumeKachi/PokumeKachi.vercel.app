@@ -1,17 +1,18 @@
 <script lang="ts">
+    import Archive from "$lib/components/Archive.svelte";
+    import PageIntro from "$lib/components/PageIntro.svelte";
+
+    import { pageCopy } from "$lib/content/pages";
     import { projects } from "$lib/content/projects";
 </script>
 
 <main class="container">
-    <header class="intro">
-        <p class="eyebrow">Selected work</p>
-        <h1 class="page-title">Things I've built.</h1>
-    </header>
+    <PageIntro {...pageCopy.projects} />
 
     <ul class="grid">
         {#each projects as project, i (project.slug)}
             <li>
-                <a class="fx-tilt fx-sheen" href={`/projects/${project.slug}`}>
+                <a class="fx-tilt" href={`/projects/${project.slug}`}>
                     <span class="num">0{i + 1}</span>
                     <h2>{project.name}</h2>
                     <p>{project.title}</p>
@@ -20,13 +21,11 @@
             </li>
         {/each}
     </ul>
+
+    <Archive />
 </main>
 
 <style>
-    .intro {
-        margin-block: clamp(2.5rem, 8vh, 5rem) 2rem;
-    }
-
     .grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));

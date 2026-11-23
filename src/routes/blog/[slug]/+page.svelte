@@ -1,14 +1,10 @@
 <script lang="ts">
-    import ScrollArt from "$lib/components/ScrollArt.svelte";
-
     import type { PageData } from "./$types";
 
     let { data }: { data: PageData } = $props();
 </script>
 
 <main class="container">
-    <ScrollArt />
-
     <a class="back" href="/blog">← All posts</a>
 
     <article>
@@ -36,12 +32,6 @@
         width: min(100% - 2rem, 52rem);
         margin-inline: auto;
         padding-block: clamp(2rem, 6dvw, 4rem);
-    }
-
-    .back,
-    article {
-        position: relative;
-        z-index: 1;
     }
 
     .back {

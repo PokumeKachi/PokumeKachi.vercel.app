@@ -9,7 +9,8 @@
         SURFACE_BLUR,
     } from "$lib/design-language";
     import MorphText from "$lib/components/MorphText.svelte";
-    import { PATH_TITLES, HEADER_LINKS } from "$lib/content/sitemap";
+    import { PATH_TITLES } from "$lib/content/sitemap";
+    import { HEADER_LINKS } from "$lib/content/navigation";
 
     let {
         navigating,

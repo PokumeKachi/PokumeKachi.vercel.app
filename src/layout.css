@@ -17,7 +17,6 @@
     --ui-radius-sm: 0.375rem;
     --ui-ease: cubic-bezier(0.22, 1, 0.36, 1);
     --ui-fast: 160ms;
-    --ui-sheen-duration: 650ms;
     --ui-tilt: 5deg;
 
     --ui-shadow: light-dark(
@@ -262,34 +261,34 @@ li:focus-within img {
     }
 }
 
+/* ---------- Scroll-driven reveals ---------- */
+@supports (animation-timeline: view()) {
+    .reveal {
+        animation: reveal linear both;
+        animation-timeline: view();
+        animation-range: entry 5% cover 30%;
+    }
+
+    @keyframes reveal {
+        from {
+            opacity: 0;
+            transform: translateY(2rem);
+        }
+        to {
+            opacity: 1;
+            transform: none;
+        }
+    }
+}
+
 /* ---------- Motion utilities ---------- */
 .fx-tilt,
-.fx-flip,
-.fx-sheen {
+.fx-flip {
     position: relative;
     transition:
         transform 300ms var(--ui-ease),
         box-shadow var(--ui-fast) ease,
         border-color var(--ui-fast) ease;
-}
-
-.fx-sheen {
-    overflow: hidden;
-}
-
-.fx-sheen::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    pointer-events: none;
-    background: linear-gradient(
-        110deg,
-        transparent 35%,
-        color-mix(in oklab, currentColor 14%, transparent) 50%,
-        transparent 65%
-    );
-    transform: translateX(-120%);
 }
 
 @media (hover: hover) {
@@ -301,11 +300,6 @@ li:focus-within img {
 
     .fx-flip:hover {
         transform: perspective(800px) rotateY(calc(var(--ui-tilt) * -2));
-    }
-
-    .fx-sheen:hover::after {
-        transform: translateX(120%);
-        transition: transform var(--ui-sheen-duration) var(--ui-ease);
     }
 }
 

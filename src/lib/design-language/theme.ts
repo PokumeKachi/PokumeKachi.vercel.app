@@ -1,3 +1,4 @@
+import { TILT_MAX } from "./hero";
 import { RADIUS, SCROLLBAR_THICKNESS } from "./geometry";
 import { PAGE_TRANSITION_DURATION } from "./timing";
 import { SURFACE_BLUR } from "./visual";
@@ -12,9 +13,8 @@ export const theme = {
     radiusSm: `${RADIUS / 2}rem`,
     ease: "cubic-bezier(0.22, 1, 0.36, 1)",
     fast: "160ms",
-    sheen: "650ms",
     entrance: "700ms",
-    tilt: "5deg",
+    tilt: `${TILT_MAX}deg`,
     container: "52rem",
     scrollbar: `${SCROLLBAR_THICKNESS}px`,
     blur: `${SURFACE_BLUR}px`,
@@ -28,7 +28,6 @@ export const themeStyle = `:root {
   --ui-radius-sm: ${theme.radiusSm};
   --ui-ease: ${theme.ease};
   --ui-fast: ${theme.fast};
-  --ui-sheen-duration: ${theme.sheen};
   --ui-entrance: ${theme.entrance};
   --ui-tilt: ${theme.tilt};
   --ui-container: ${theme.container};
