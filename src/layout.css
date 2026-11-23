@@ -12,6 +12,8 @@
     /* Tints monochrome artwork to the primary accent (light theme). */
     --theme-filter: brightness(0) saturate(100%) invert(26%) sepia(91%)
         saturate(1340%) hue-rotate(178deg) brightness(96%) contrast(98%);
+    /* Inverted tint for use on accent-filled surfaces. */
+    --theme-filter-inverse: brightness(0) invert(1);
 }
 
 /* ---------- Canvas ---------- */
@@ -230,6 +232,58 @@ li:focus-within img {
     }
 }
 
+/* ---------- Reusable motion ----------
+   Hover-only, transform/opacity based, and inert on touch/reduced-motion. */
+.fx-tilt,
+.fx-flip,
+.fx-sheen {
+    position: relative;
+    transform-style: preserve-3d;
+    transition:
+        transform 300ms var(--ui-ease),
+        box-shadow var(--ui-fast) ease,
+        border-color var(--ui-fast) ease;
+}
+
+.fx-sheen {
+    overflow: hidden;
+    isolation: isolate;
+}
+
+.fx-sheen::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    /* currentColor keeps the sheen legible in both themes: dark text gets a
+       dark sweep on light cards, white text gets a light sweep on accent fills. */
+    background: linear-gradient(
+        110deg,
+        transparent 32%,
+        color-mix(in oklab, currentColor 18%, transparent) 50%,
+        transparent 68%
+    );
+    transform: translateX(-120%);
+}
+
+@media (hover: hover) {
+    .fx-tilt:hover {
+        transform: perspective(800px) rotateX(5deg) rotateY(-5deg)
+            translateY(-4px);
+        box-shadow: var(--ui-shadow-lift);
+    }
+
+    .fx-flip:hover {
+        transform: perspective(800px) rotateY(-9deg) translateY(-3px);
+    }
+
+    .fx-sheen:hover::after {
+        transform: translateX(120%);
+        transition: transform 650ms var(--ui-ease);
+    }
+}
+
 /* ---------- Utilities ---------- */
 html.navigating,
 html.navigating * {
@@ -248,6 +302,7 @@ nav,
         /* Brighter accent tint for dark surfaces. */
         --theme-filter: brightness(0) saturate(100%) invert(61%) sepia(98%)
             saturate(1870%) hue-rotate(174deg) brightness(102%) contrast(101%);
+        --theme-filter-inverse: brightness(0) invert(0.08);
     }
 }
 

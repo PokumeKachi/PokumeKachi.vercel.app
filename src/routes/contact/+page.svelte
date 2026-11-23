@@ -32,7 +32,7 @@
         {#each links as { name, icon, url }}
             <li>
                 <a href={url} aria-label={`Visit ${name}`}>
-                    <span class="badge">
+                    <span class="badge fx-tilt fx-sheen">
                         <img class="themed-image" src={icon} alt="" />
                     </span>
                     <span class="label">{name}</span>
@@ -107,6 +107,7 @@
         transition:
             transform var(--ui-fast) var(--ui-ease),
             border-color var(--ui-fast) ease,
+            background-color var(--ui-fast) ease,
             box-shadow var(--ui-fast) ease;
     }
 
@@ -123,16 +124,15 @@
     }
 
     @media (hover: hover) {
-        a:hover {
-            border-color: var(--pico-border-color);
-            background: var(--pico-card-background-color);
+        a:hover .badge {
+            border-color: var(--pico-primary);
+            background: var(--pico-primary);
+            color: var(--pico-primary-inverse);
         }
 
-        a:hover .badge {
-            transform: translateY(-4px);
-            border-color: var(--pico-primary);
-            box-shadow: 0 12px 28px -12px
-                color-mix(in oklab, var(--pico-primary) 55%, transparent);
+        /* Swap: the logo takes on the badge's former background colour. */
+        a:hover img {
+            filter: var(--theme-filter-inverse);
         }
 
         a:hover .label {

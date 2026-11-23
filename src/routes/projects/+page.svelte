@@ -11,7 +11,7 @@
     <ul class="grid">
         {#each projects as project, i (project.slug)}
             <li>
-                <a href={`/projects/${project.slug}`}>
+                <a class="fx-tilt fx-sheen" href={`/projects/${project.slug}`}>
                     <span class="num">0{i + 1}</span>
                     <h2>{project.name}</h2>
                     <p>{project.title}</p>
@@ -103,7 +103,6 @@
 
     @media (hover: hover) {
         .grid a:hover {
-            transform: translateY(-4px);
             border-color: var(--pico-primary);
             box-shadow: var(--ui-shadow-lift);
         }

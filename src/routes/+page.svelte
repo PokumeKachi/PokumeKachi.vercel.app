@@ -53,9 +53,9 @@
             </p>
 
             <nav class="actions" aria-label="Explore">
-                <a class="primary" href="/projects">Projects</a>
-                <a href="/blog">Writing</a>
-                <a href="/contact">Contact</a>
+                <a class="primary fx-tilt fx-sheen" href="/projects">Projects</a>
+                <a class="fx-tilt fx-sheen" href="/blog">Writing</a>
+                <a class="fx-tilt fx-sheen" href="/contact">Contact</a>
             </nav>
         </section>
     </div>
@@ -112,18 +112,35 @@
         animation-duration: 20s;
     }
 
+    /* 2D conic ring: identical circle in Chromium and Firefox (3D rotateX
+       gets flattened inconsistently across engines). */
     .ring {
         position: absolute;
         top: 16%;
         right: 12%;
         width: 18rem;
         aspect-ratio: 1;
-
-        border: 1px solid color-mix(in oklab, var(--pico-primary) 26%, transparent);
         border-radius: 50%;
 
-        transform: rotateX(68deg);
-        animation: orbit 22s linear infinite;
+        background: conic-gradient(
+            from 0deg,
+            transparent 0 62%,
+            color-mix(in oklab, var(--pico-primary) 55%, transparent) 82%,
+            transparent 100%
+        );
+        -webkit-mask: radial-gradient(
+            farthest-side,
+            transparent calc(100% - 2px),
+            #000 calc(100% - 1px)
+        );
+        mask: radial-gradient(
+            farthest-side,
+            transparent calc(100% - 2px),
+            #000 calc(100% - 1px)
+        );
+        opacity: 0.55;
+
+        animation: orbit 14s linear infinite;
         pointer-events: none;
     }
 
@@ -139,7 +156,7 @@
 
     @keyframes orbit {
         to {
-            transform: rotateX(68deg) rotateZ(360deg);
+            transform: rotate(1turn);
         }
     }
 
@@ -236,7 +253,6 @@
 
     @media (hover: hover) {
         .actions a:hover {
-            transform: translate3d(0, -3px, 26px);
             border-color: var(--pico-primary);
             box-shadow: 0 14px 30px -12px
                 color-mix(in oklab, var(--pico-primary) 55%, transparent);

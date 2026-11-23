@@ -1,10 +1,14 @@
 <script lang="ts">
+    import ScrollArt from "$lib/components/ScrollArt.svelte";
+
     import type { PageData } from "./$types";
 
     let { data }: { data: PageData } = $props();
 </script>
 
 <main class="container">
+    <ScrollArt />
+
     <header class="page-header">
         <p class="eyebrow">Writing & notes</p>
         <h1>Blog</h1>
@@ -17,7 +21,7 @@
         <ul class="posts" aria-label="Blog posts">
             {#each data.posts as post (post.slug)}
                 <li>
-                    <a href={`/blog/${post.slug}`}>
+                    <a class="fx-tilt fx-sheen" href={`/blog/${post.slug}`}>
                         <span class="meta">
                             {#if post.date}
                                 <time datetime={post.date}>{post.dateLabel}</time>
@@ -38,9 +42,18 @@
 
 <style>
     .container {
+        position: relative;
+        isolation: isolate;
+
         width: min(100% - 2rem, 52rem);
         margin-inline: auto;
         padding-block: clamp(3rem, 8dvw, 7rem);
+    }
+
+    .page-header,
+    .posts {
+        position: relative;
+        z-index: 1;
     }
 
     .page-header {
@@ -127,7 +140,6 @@
 
     @media (hover: hover) {
         .posts a:hover {
-            transform: translateY(-3px);
             border-color: var(--pico-primary);
             box-shadow: var(--ui-shadow-lift);
         }
