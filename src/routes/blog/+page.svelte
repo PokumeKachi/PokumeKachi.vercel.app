@@ -2,24 +2,11 @@
     import type { PageData } from "./$types";
 
     let { data }: { data: PageData } = $props();
-
-    const dateFormatter = new Intl.DateTimeFormat("en", {
-        dateStyle: "medium",
-        timeZone: "UTC",
-    });
-
-    function formatDate(date: string): string {
-        const parsed = new Date(`${date}T00:00:00Z`);
-
-        if (Number.isNaN(parsed.getTime())) return date;
-
-        return dateFormatter.format(parsed);
-    }
 </script>
 
 <main class="container">
     <header class="page-header">
-        <p class="eyebrow">WRITING & NOTES</p>
+        <p class="eyebrow">Writing & notes</p>
         <h1>Blog</h1>
         <p class="intro">Thoughts, projects, and things I've learned.</p>
     </header>
@@ -27,31 +14,25 @@
     {#if data.posts.length === 0}
         <p class="empty">No posts yet.</p>
     {:else}
-        <section class="posts" aria-label="Blog posts">
+        <ul class="posts" aria-label="Blog posts">
             {#each data.posts as post (post.slug)}
-                <article class="post">
-                    <header class="post-header">
-                        {#if post.date}
-                            <time datetime={post.date}>
-                                {formatDate(post.date)}
-                            </time>
-                        {/if}
+                <li>
+                    <a href={`/blog/${post.slug}`}>
+                        <span class="meta">
+                            {#if post.date}
+                                <time datetime={post.date}>{post.dateLabel}</time>
+                            {/if}
+                            <span class="arrow" aria-hidden="true">↗</span>
+                        </span>
 
                         <h2>{post.title}</h2>
-
                         {#if post.description}
-                            <p class="description">
-                                {post.description}
-                            </p>
+                            <p>{post.description}</p>
                         {/if}
-                    </header>
-
-                    <div class="markdown-content">
-                        {@html post.html}
-                    </div>
-                </article>
+                    </a>
+                </li>
             {/each}
-        </section>
+        </ul>
     {/if}
 </main>
 
@@ -71,6 +52,7 @@
         font-size: 0.75rem;
         font-weight: 700;
         letter-spacing: 0.14em;
+        text-transform: uppercase;
         opacity: 0.6;
     }
 
@@ -89,39 +71,52 @@
 
     .posts {
         display: grid;
-        gap: 1.5rem;
+        gap: 1rem;
+        margin: 0;
+        padding: 0;
     }
 
-    .post {
-        min-width: 0;
-        padding: clamp(1.25rem, 4dvw, 2rem);
-        border: 1px solid var(--border-color, rgb(128 128 128 / 25%));
-        border-radius: 1.25rem;
-        background: var(--card-background, transparent);
-        overflow-wrap: anywhere;
+    .posts li {
+        list-style: none;
     }
 
-    .post-header {
-        margin-bottom: 1.5rem;
-    }
-
-    time {
+    .posts a {
         display: block;
-        margin-bottom: 0.75rem;
+        padding: clamp(1.25rem, 4dvw, 1.75rem);
+        border: 1px solid var(--pico-border-color);
+        border-radius: var(--ui-radius);
+        background: var(--pico-card-background-color);
+        box-shadow: var(--ui-shadow);
+        text-decoration: none;
+        transition:
+            transform var(--ui-fast) var(--ui-ease),
+            border-color var(--ui-fast) ease,
+            box-shadow var(--ui-fast) ease;
+    }
+
+    .meta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
         font-size: 0.8rem;
         opacity: 0.6;
     }
 
-    .post-header h2 {
-        margin: 0;
-        font-size: clamp(1.5rem, 4dvw, 2rem);
-        line-height: 1.3;
-        letter-spacing: -0.035em;
+    .arrow {
+        transition:
+            transform var(--ui-fast) var(--ui-ease),
+            opacity var(--ui-fast) ease;
     }
 
-    .description {
-        margin-top: 0.75rem;
-        line-height: 1.7;
+    h2 {
+        margin: 0.6rem 0 0.35rem;
+        font-size: clamp(1.35rem, 3dvw, 1.75rem);
+        line-height: 1.3;
+    }
+
+    p {
+        margin: 0;
+        line-height: 1.6;
         opacity: 0.7;
     }
 
@@ -130,75 +125,16 @@
         opacity: 0.6;
     }
 
-    :global(.markdown-content) {
-        line-height: 1.8;
-        overflow-wrap: anywhere;
-    }
+    @media (hover: hover) {
+        .posts a:hover {
+            transform: translateY(-3px);
+            border-color: var(--pico-primary);
+            box-shadow: var(--ui-shadow-lift);
+        }
 
-    :global(.markdown-content > :first-child) {
-        margin-top: 0;
-    }
-
-    :global(.markdown-content > :last-child) {
-        margin-bottom: 0;
-    }
-
-    :global(.markdown-content h2),
-    :global(.markdown-content h3) {
-        margin-top: 1.75em;
-        margin-bottom: 0.5em;
-        line-height: 1.4;
-    }
-
-    :global(.markdown-content p),
-    :global(.markdown-content ul),
-    :global(.markdown-content ol) {
-        margin-block: 1em;
-    }
-
-    :global(.markdown-content a) {
-        text-underline-offset: 0.2em;
-    }
-
-    :global(.markdown-content img) {
-        display: block;
-        max-width: 100%;
-        height: auto;
-        margin-block: 1.5rem;
-        border-radius: 0.75rem;
-    }
-
-    :global(.markdown-content pre) {
-        max-width: 100%;
-        padding: 1rem;
-        overflow-x: auto;
-        border-radius: 0.75rem;
-        background: var(--code-background, rgb(128 128 128 / 12%));
-    }
-
-    :global(.markdown-content code) {
-        font-family: monospace;
-        font-size: 0.9em;
-    }
-
-    :global(.markdown-content blockquote) {
-        margin-inline: 0;
-        padding-left: 1rem;
-        border-left: 3px solid var(--border-color, rgb(128 128 128 / 35%));
-        opacity: 0.8;
-    }
-
-    :global(.markdown-content table) {
-        display: block;
-        max-width: 100%;
-        overflow-x: auto;
-        border-collapse: collapse;
-    }
-
-    :global(.markdown-content th),
-    :global(.markdown-content td) {
-        padding: 0.5rem 0.75rem;
-        border: 1px solid var(--border-color, rgb(128 128 128 / 25%));
-        text-align: left;
+        .posts a:hover .arrow {
+            transform: translate(3px, -3px);
+            opacity: 1;
+        }
     }
 </style>

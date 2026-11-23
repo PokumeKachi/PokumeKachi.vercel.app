@@ -67,7 +67,7 @@
         flex-direction: column;
 
         width: 100%;
-        height: var(--remaining-height);
+        height: calc(100dvh - var(--header-height, 0px));
         min-height: 0;
 
         overflow: hidden;

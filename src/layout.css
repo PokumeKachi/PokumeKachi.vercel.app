@@ -19,8 +19,17 @@ html {
     overflow: auto;
     scrollbar-width: none;
     scroll-padding-top: var(--header-height, 0px);
-
     background-color: var(--pico-background-color);
+}
+
+/* Viewport-anchored glow: does not shift when route content changes height. */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+
     background-image:
         radial-gradient(
             46rem 30rem at 10% -10%,
@@ -32,7 +41,6 @@ html {
             color-mix(in oklab, var(--pico-primary) 9%, transparent),
             transparent 70%
         );
-    background-repeat: no-repeat;
 }
 
 html::-webkit-scrollbar {
@@ -96,6 +104,79 @@ article,
 pre,
 blockquote {
     border-radius: var(--ui-radius-sm);
+}
+
+/* ---------- Markdown content ---------- */
+.markdown-content {
+    line-height: 1.8;
+    overflow-wrap: anywhere;
+}
+
+.markdown-content > :first-child {
+    margin-top: 0;
+}
+
+.markdown-content > :last-child {
+    margin-bottom: 0;
+}
+
+.markdown-content h2,
+.markdown-content h3 {
+    margin-top: 1.75em;
+    margin-bottom: 0.5em;
+    line-height: 1.4;
+}
+
+.markdown-content p,
+.markdown-content ul,
+.markdown-content ol {
+    margin-block: 1em;
+}
+
+.markdown-content a {
+    text-underline-offset: 0.2em;
+}
+
+.markdown-content img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin-block: 1.5rem;
+    border-radius: 0.75rem;
+}
+
+.markdown-content pre {
+    max-width: 100%;
+    padding: 1rem;
+    overflow-x: auto;
+    border-radius: 0.75rem;
+    background: var(--code-background, rgb(128 128 128 / 12%));
+}
+
+.markdown-content code {
+    font-family: monospace;
+    font-size: 0.9em;
+}
+
+.markdown-content blockquote {
+    margin-inline: 0;
+    padding-left: 1rem;
+    border-left: 3px solid var(--pico-muted-border-color);
+    opacity: 0.8;
+}
+
+.markdown-content table {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+    border-collapse: collapse;
+}
+
+.markdown-content th,
+.markdown-content td {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--pico-border-color);
+    text-align: left;
 }
 
 /* ---------- Controls ---------- */
