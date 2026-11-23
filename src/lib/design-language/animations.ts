@@ -9,12 +9,12 @@ const visible = { transform: "translateY(0)", opacity: 1, filter: "blur(0)" };
 const above = {
     transform: "translateY(50dvh)",
     opacity: 0,
-    filter: "blur(16px)",
+    filter: "blur(8px)",
 };
 const below = {
     transform: "translateY(-50dvh)",
     opacity: 0,
-    filter: "blur(16px)",
+    filter: "blur(8px)",
 };
 
 const options = (duration: number, easing: string): KeyframeAnimationOptions => ({

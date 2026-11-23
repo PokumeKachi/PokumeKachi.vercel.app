@@ -1,42 +1,154 @@
 @import "tailwindcss";
 
-li img {
-    transition:
-        transform var(--pico-transition),
-        filter var(--pico-transition);
-}
-li:has(img) {
-    list-style: none;
-}
-li:hover img,
-li:focus-within img {
-    transform: scale(1.15) translateY(-0.2rem);
-    filter: var(--theme-filter) drop-shadow(0 0 0.5rem currentColor);
-}
-img.themed-image {
-    filter: var(--theme-filter);
-}
-
+/* ---------- Design tokens ---------- */
 :root {
+    --ui-radius: 0.85rem;
+    --ui-radius-sm: 0.5rem;
+    --ui-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --ui-fast: 160ms;
+    --ui-shadow: 0 1px 2px rgb(0 0 0 / 6%), 0 8px 24px -16px rgb(0 0 0 / 30%);
+    --ui-shadow-lift: 0 12px 32px -16px rgb(0 0 0 / 38%);
+
     --theme-filter: grayscale(1) invert(72%) sepia(20%) saturate(700%)
         hue-rotate(135deg) brightness(70%) contrast(105%);
 }
 
+/* ---------- Canvas ---------- */
 html {
     min-height: 100%;
     overflow: auto;
     scrollbar-width: none;
-}
+    scroll-padding-top: var(--header-height, 0px);
 
-body {
-    min-height: 100%;
-    height: auto;
+    background-color: var(--pico-background-color);
+    background-image:
+        radial-gradient(
+            46rem 30rem at 10% -10%,
+            color-mix(in oklab, var(--pico-primary) 13%, transparent),
+            transparent 70%
+        ),
+        radial-gradient(
+            40rem 28rem at 110% 0%,
+            color-mix(in oklab, var(--pico-primary) 9%, transparent),
+            transparent 70%
+        );
+    background-repeat: no-repeat;
 }
 
 html::-webkit-scrollbar {
     display: none;
 }
 
+body {
+    min-height: 100%;
+    height: auto;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+/* ---------- Typography & links ---------- */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    text-wrap: balance;
+    letter-spacing: -0.025em;
+}
+
+p {
+    text-wrap: pretty;
+}
+
+a {
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.22em;
+    text-decoration-color: color-mix(in oklab, currentColor 40%, transparent);
+    transition:
+        color var(--ui-fast) ease,
+        text-decoration-color var(--ui-fast) ease,
+        border-color var(--ui-fast) ease;
+}
+
+a:hover {
+    text-decoration-color: currentColor;
+}
+
+::selection {
+    background: color-mix(in oklab, var(--pico-primary) 30%, transparent);
+}
+
+:focus-visible {
+    outline: 2px solid var(--pico-primary);
+    outline-offset: 3px;
+}
+
+/* ---------- Surfaces ---------- */
+article,
+.card {
+    border: 1px solid var(--pico-border-color);
+    border-radius: var(--ui-radius);
+    background: var(--pico-card-background-color);
+    box-shadow: var(--ui-shadow);
+}
+
+pre,
+blockquote {
+    border-radius: var(--ui-radius-sm);
+}
+
+/* ---------- Controls ---------- */
+button,
+[role="button"],
+.button {
+    border-radius: var(--ui-radius-sm);
+    transition:
+        transform var(--ui-fast) var(--ui-ease),
+        box-shadow var(--ui-fast) var(--ui-ease),
+        background-color var(--ui-fast) ease;
+}
+
+@media (hover: hover) {
+    button:not(:disabled):hover,
+    [role="button"]:not(:disabled):hover {
+        transform: translateY(-1px);
+        box-shadow: var(--ui-shadow-lift);
+    }
+}
+
+button:not(:disabled):active {
+    transform: translateY(0);
+}
+
+/* ---------- Imagery ---------- */
+li img {
+    transition:
+        transform var(--ui-fast) var(--ui-ease),
+        filter var(--ui-fast) ease;
+}
+
+li:has(img) {
+    list-style: none;
+}
+
+img.themed-image {
+    filter: var(--theme-filter);
+}
+
+li:focus-within img {
+    transform: scale(1.12) translateY(-0.15rem);
+    filter: var(--theme-filter) drop-shadow(0 0 0.5rem currentColor);
+}
+
+@media (hover: hover) {
+    li:hover img {
+        transform: scale(1.12) translateY(-0.15rem);
+        filter: var(--theme-filter) drop-shadow(0 0 0.5rem currentColor);
+    }
+}
+
+/* ---------- Utilities ---------- */
 html.navigating,
 html.navigating * {
     cursor: wait !important;
@@ -48,6 +160,7 @@ nav,
     user-select: none;
 }
 
+/* ---------- Themes & preferences ---------- */
 @media (prefers-color-scheme: dark) {
     :root {
         --theme-filter: grayscale(1) invert(72%) sepia(20%) saturate(700%)
@@ -60,6 +173,7 @@ nav,
     *::before,
     *::after {
         animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;
     }
