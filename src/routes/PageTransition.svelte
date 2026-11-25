@@ -1,3 +1,4 @@
+
 <script lang="ts">
     import { onNavigate } from "$app/navigation";
 
@@ -9,7 +10,9 @@
         }
 
         const doc = document as Document & {
-            startViewTransition?: (callback: () => Promise<void>) => unknown;
+            startViewTransition?: (
+                callback: () => Promise<void>,
+            ) => unknown;
         };
 
         if (
@@ -18,6 +21,16 @@
         ) {
             return;
         }
+
+        // Reverse the transition when navigating backward.
+        const direction =
+            navigation.type === "popstate" &&
+            navigation.delta !== undefined &&
+            navigation.delta < 0
+                ? "back"
+                : "forward";
+
+        document.documentElement.dataset.navigationDirection = direction;
 
         return new Promise<void>((resolve) => {
             doc.startViewTransition!(async () => {
@@ -33,12 +46,25 @@
 </div>
 
 <style>
+    :global(:root) {
+        --route-duration: 420ms;
+        --route-easing: cubic-bezier(0.22, 1, 0.36, 1);
+        --route-exit-duration: 180ms;
+    }
+
     .page-transition {
         min-width: 0;
         view-transition-name: route-content;
     }
 
-    :global(::view-transition),
+    /* =========================================
+       VIEW TRANSITION BASE
+       ========================================= */
+
+    :global(::view-transition) {
+        pointer-events: none;
+    }
+
     :global(::view-transition-group(route-content)),
     :global(::view-transition-image-pair(route-content)),
     :global(::view-transition-old(route-content)),
@@ -47,75 +73,103 @@
     }
 
     :global(::view-transition-group(route-content)) {
-        animation-duration: 900ms;
-        animation-timing-function: ease-in-out;
+        animation-duration: var(--route-duration);
+        animation-timing-function: var(--route-easing);
     }
 
     :global(::view-transition-image-pair(route-content)) {
         isolation: isolate;
     }
 
-    :global(::view-transition-old(route-content)) {
-        animation:
-            route-exit 360ms ease-in both,
-            route-fade-out 140ms ease-out both;
+    /* =========================================
+       OUTGOING PAGE
+       ========================================= */
 
-        transform-origin: center;
+    :global(::view-transition-old(route-content)) {
+        animation: route-exit var(--route-exit-duration)
+            cubic-bezier(0.4, 0, 1, 1) both;
+
         backface-visibility: hidden;
     }
+
+    /* =========================================
+       INCOMING PAGE
+       ========================================= */
 
     :global(::view-transition-new(route-content)) {
-        animation:
-            route-enter 650ms ease-out both,
-            route-fade-in 900ms ease-in-out both;
+        animation: route-enter var(--route-duration)
+            var(--route-easing) both;
 
-        transform-origin: center;
         backface-visibility: hidden;
     }
+
+    /* =========================================
+       FORWARD NAVIGATION
+       ========================================= */
 
     @keyframes route-exit {
         from {
-            transform: translateZ(0) scale(1);
-            filter: blur(0);
+            opacity: 1;
+            transform: translate3d(0, 0, 0) scale(1);
         }
 
         to {
-            transform: translateZ(-50px) scale(0.985);
-            filter: blur(3px);
+            opacity: 0;
+            transform: translate3d(0, -8px, 0) scale(0.995);
         }
     }
 
     @keyframes route-enter {
         from {
-            transform: translateZ(-80px) scale(0.96);
-            filter: blur(4px);
-        }
-
-        to {
-            transform: translateZ(0) scale(1);
-            filter: blur(0);
-        }
-    }
-
-    @keyframes route-fade-out {
-        from {
-            opacity: 1;
-        }
-
-        to {
             opacity: 0;
-        }
-    }
-
-    @keyframes route-fade-in {
-        from {
-            opacity: 0;
+            transform: translate3d(0, 12px, 0) scale(0.995);
         }
 
         to {
             opacity: 1;
+            transform: translate3d(0, 0, 0) scale(1);
         }
     }
+
+    /* =========================================
+       BACKWARD NAVIGATION
+       ========================================= */
+
+    :global(html[data-navigation-direction="back"]::view-transition-old(route-content)) {
+        animation-name: route-exit-back;
+    }
+
+    :global(html[data-navigation-direction="back"]::view-transition-new(route-content)) {
+        animation-name: route-enter-back;
+    }
+
+    @keyframes route-exit-back {
+        from {
+            opacity: 1;
+            transform: translate3d(0, 0, 0) scale(1);
+        }
+
+        to {
+            opacity: 0;
+            transform: translate3d(0, 8px, 0) scale(0.995);
+        }
+    }
+
+    @keyframes route-enter-back {
+        from {
+            opacity: 0;
+            transform: translate3d(0, -12px, 0) scale(0.995);
+        }
+
+        to {
+            opacity: 1;
+            transform: translate3d(0, 0, 0) scale(1);
+        }
+    }
+
+    /* =========================================
+       REDUCED MOTION
+       ========================================= */
 
     @media (prefers-reduced-motion: reduce) {
         :global(::view-transition-group(route-content)),

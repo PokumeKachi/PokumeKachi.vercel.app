@@ -9,7 +9,9 @@
             <li>
                 <a
                     href="/"
-                    aria-current={page.url.pathname === "/" ? "page" : undefined}
+                    aria-current={page.url.pathname === "/"
+                        ? "page"
+                        : undefined}
                 >
                     <strong>Pokume Kachi</strong>
                 </a>
@@ -32,3 +34,9 @@
         </ul>
     </nav>
 </header>
+
+<style>
+    header {
+        background-color: #ffffff;
+    }
+</style>

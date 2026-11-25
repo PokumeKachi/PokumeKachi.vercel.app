@@ -7,7 +7,6 @@
     let { children } = $props();
 </script>
 
-<Glow />
 <Header />
 
 <main class="container">
@@ -17,3 +16,4 @@
 </main>
 
 <Footer />
+<Glow />
