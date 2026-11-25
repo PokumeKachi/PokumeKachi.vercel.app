@@ -3,7 +3,7 @@
     import { HEADER_LINKS } from "$lib/content/sitemap";
 </script>
 
-<header class="container glow">
+<header class="container">
     <nav aria-label="Primary">
         <ul>
             <li>
