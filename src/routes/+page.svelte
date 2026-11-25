@@ -8,8 +8,7 @@
             <h2 id="about-title">About</h2>
         </header>
         <p>
-            I build clean, fast interfaces and small tools that make the web a
-            little more useful.
+        I build stuff.
         </p>
     </article>
 </section>
