@@ -104,6 +104,7 @@
 
 {#if page.url.pathname === "/"}
     <Scene3D />
+    <div class="invert-beat" aria-hidden="true"></div>
 {/if}
 
 <div class:loaded={introStarted} id="preload-overlay"></div>

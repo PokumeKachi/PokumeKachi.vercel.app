@@ -8,5 +8,7 @@ export const SCENE = {
     pointCount: 140,
     opacity: 0.2,
     pointOpacity: 0.3,
-    spin: Math.PI * 1.6,
+    spin: Math.PI * 3,
+    swing: 3,
+    pointer: 0.8,
 } as const;

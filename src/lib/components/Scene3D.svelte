@@ -102,10 +102,12 @@
 
             const render = () => {
                 const p = progress();
-                root.rotation.y = p * SCENE.spin + easedX * 0.4;
-                root.rotation.x = p * Math.PI * 0.5 + easedY * 0.3;
-                root.position.y = (0.5 - p) * 1.4;
-                points.rotation.y = -p * Math.PI;
+                root.rotation.y = p * SCENE.spin + easedX * SCENE.pointer;
+                root.rotation.x = p * Math.PI * 0.9 + easedY * SCENE.pointer * 0.6;
+                root.rotation.z = p * Math.PI * 0.35 - easedX * 0.2;
+                root.position.y = (0.5 - p) * SCENE.swing;
+                root.scale.setScalar(1 + p * 0.25);
+                points.rotation.y = -p * Math.PI * 2;
                 renderer.render(scene, camera);
             };
 

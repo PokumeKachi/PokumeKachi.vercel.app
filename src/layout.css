@@ -6,6 +6,18 @@
     initial-value: 0;
 }
 
+@property --zoom {
+    syntax: "<number>";
+    inherits: false;
+    initial-value: 0;
+}
+
+@property --spin {
+    syntax: "<number>";
+    inherits: false;
+    initial-value: 0;
+}
+
 @font-face {
     font-family: "Geist";
     src: url("/fonts/Geist-Bold.ttf") format("truetype");
@@ -33,6 +45,13 @@
         0 12px 30px -14px rgb(0 0 0 / 18%),
         0 16px 38px -18px rgb(0 0 0 / 75%)
     );
+
+    /* Inversion wash: a low-strength, steadily held difference tint in Pico's
+       own accent. The primary keeps the negative chromatic so it still pops,
+       while the gentler strength keeps it easy on the eyes. Mirrored from
+       $lib/design-language/theme.ts, like the rest of the --ui-* variables. */
+    --ui-invert-strength: 10%;
+    --ui-invert-color: var(--pico-primary);
 
     --theme-filter: brightness(0) saturate(100%) invert(26%) sepia(91%)
         saturate(1340%) hue-rotate(178deg) brightness(96%) contrast(98%);
@@ -272,17 +291,56 @@ li:focus-within img {
     .reveal {
         animation: reveal linear both;
         animation-timeline: view();
-        animation-range: entry 5% cover 30%;
+        animation-range: entry 0% cover 35%;
     }
 
     @keyframes reveal {
         from {
             opacity: 0;
-            transform: translateY(2rem);
+            transform: perspective(900px) translateY(5rem) translateX(-2rem)
+                rotateX(18deg) rotateZ(-4deg) scale(0.88);
+            filter: blur(6px);
+        }
+        60% {
+            opacity: 1;
         }
         to {
             opacity: 1;
             transform: none;
+            filter: none;
+        }
+    }
+}
+
+/* The inversion wash: one full-viewport difference layer tinted with Pico's
+   own primary. It eases in once, early, and then holds at a deliberately low
+   strength (--ui-invert-strength) all the way to the end of the page. A single
+   slow ramp instead of an on/off beat avoids the flash that strains the eye. */
+.invert-beat {
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+    pointer-events: none;
+    background: var(--ui-invert-color, var(--pico-primary));
+    mix-blend-mode: difference;
+    opacity: 0;
+}
+
+@supports (animation-timeline: scroll()) {
+    .invert-beat {
+        animation: invert-beat linear both;
+        animation-timeline: scroll(root block);
+        animation-range: 0 100%;
+    }
+
+    @keyframes invert-beat {
+        0% {
+            opacity: 0;
+        }
+        /* Hold from here to 100% so the wash persists to the page's end. */
+        24%,
+        100% {
+            opacity: var(--ui-invert-strength, 10%);
         }
     }
 }
@@ -338,5 +396,11 @@ nav,
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;
+    }
+
+    /* A held difference wash is exactly the kind of effect this preference
+       is meant to suppress. */
+    .invert-beat {
+        display: none;
     }
 }

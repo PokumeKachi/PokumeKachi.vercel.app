@@ -6,7 +6,7 @@
 <main class="container">
     <div class="layer">
         <Hero />
-        <div class="reveal"><About /></div>
+        <About />
     </div>
 </main>
 

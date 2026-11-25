@@ -20,6 +20,12 @@ export const theme = {
     blur: `${SURFACE_BLUR}px`,
     glow: "13%",
     glowAlt: "9%",
+    /* Inversion wash: a low-strength, steadily held difference tint in Pico's
+       own accent. Using the theme's primary keeps the negative chromatic (it
+       pops without a hard white flip), while the reduced strength and the
+       single slow ramp keep it comfortable to read through. */
+    invertStrength: "10%",
+    invertColor: "var(--pico-primary)",
     navDelay: `${PAGE_TRANSITION_DURATION}ms`,
 } as const;
 
@@ -33,4 +39,6 @@ export const themeStyle = `:root {
   --ui-container: ${theme.container};
   --ui-glow: ${theme.glow};
   --ui-glow-alt: ${theme.glowAlt};
+  --ui-invert-strength: ${theme.invertStrength};
+  --ui-invert-color: ${theme.invertColor};
 }`;

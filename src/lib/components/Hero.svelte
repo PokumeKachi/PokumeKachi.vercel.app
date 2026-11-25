@@ -76,23 +76,40 @@
         padding-block: clamp(5rem, 16vh, 10rem);
 
         transform-style: preserve-3d;
-        transform: translateY(calc(var(--parallax, 0) * -3rem))
+        transform:
+            translate3d(0, calc(var(--parallax, 0) * -9rem), 0)
+            scale(calc(1 - var(--zoom, 0) * 0.22))
+            rotate(calc(var(--spin, 0) * -6deg))
             rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
         transition: transform 320ms var(--ui-ease);
     }
 
     @supports (animation-timeline: scroll()) {
         .content {
-            animation: hero-parallax linear both;
+            animation: hero-motion linear both;
             animation-timeline: scroll(root block);
-            animation-range: 0 45vh;
+            animation-range: 0 70vh;
         }
     }
 
-    @keyframes hero-parallax {
-        to {
+    @keyframes hero-motion {
+        0% {
+            --parallax: 0;
+            --zoom: 0;
+            --spin: 0;
+            opacity: 1;
+        }
+        50% {
+            --parallax: 0.55;
+            --zoom: 0.1;
+            --spin: 0.35;
+            opacity: 1;
+        }
+        100% {
             --parallax: 1;
-            opacity: 0.4;
+            --zoom: 1;
+            --spin: 1;
+            opacity: 0;
         }
     }
 
