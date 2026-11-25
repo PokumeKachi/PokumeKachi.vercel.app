@@ -9,36 +9,35 @@
 .glow::before,
 .glow::after {
     z-index: -1;
-}
 
-.glow::before {
     content: "";
     position: absolute;
     inset: 0;
-    border-radius: inherit;
-    pointer-events: none;
 
+    pointer-events: none;
+    border-radius: inherit;
+}
+
+.glow::before {
     background: radial-gradient(
-        var(--glow-size) circle at var(--mouse-x, -1000px)
+        circle var(--glow-size) at var(--mouse-x, -1000px)
             var(--mouse-y, -1000px),
-        color-mix(in srgb, var(--glow-color) 20%, transparent),
+        color-mix(in srgb, var(--glow-color) 20%, transparent) 0%,
+        color-mix(in srgb, var(--glow-color) 12%, transparent) 25%,
+        color-mix(in srgb, var(--glow-color) 5%, transparent) 55%,
         transparent 100%
     );
 }
 
 .glow::after {
-    content: "";
-    position: absolute;
-    inset: 0;
     padding: 2px;
-    border-radius: inherit;
-    pointer-events: none;
-    z-index: -1;
 
     background: radial-gradient(
-        var(--glow-size) circle at var(--mouse-x, -1000px)
+        circle var(--glow-size) at var(--mouse-x, -1000px)
             var(--mouse-y, -1000px),
-        var(--glow-color),
+        var(--glow-color) 0%,
+        color-mix(in srgb, var(--glow-color) 65%, transparent) 20%,
+        color-mix(in srgb, var(--glow-color) 20%, transparent) 55%,
         transparent 100%
     );
 
