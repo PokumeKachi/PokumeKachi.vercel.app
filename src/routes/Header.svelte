@@ -37,6 +37,6 @@
 
 <style>
     header {
-        background-color: #ffffff;
+        background-color: var(--pico-background-color);
     }
 </style>

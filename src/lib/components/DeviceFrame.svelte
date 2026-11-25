@@ -41,19 +41,14 @@
     {/if}
 
     {#if embedUrl}
-        <nav aria-label="Embedded site">
-            <ul>
-                <li>
-                    <a
-                        href={embedUrl.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        Open in new tab
-                    </a>
-                </li>
-            </ul>
-        </nav>
+        <a
+            aria-label="Embedded site"
+            href={embedUrl.href}
+            target="_blank"
+            rel="noopener noreferrer"
+        >
+            Open in new tab
+        </a>
 
         <iframe
             src={embedUrl.href}
@@ -63,8 +58,6 @@
             loading="lazy"
         ></iframe>
     {:else}
-        <p role="alert">
-            Invalid URL. Only HTTP and HTTPS URLs are supported.
-        </p>
+        <p role="alert">Invalid URL. Only HTTP and HTTPS URLs are supported.</p>
     {/if}
 </div>

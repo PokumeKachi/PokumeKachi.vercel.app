@@ -4,21 +4,71 @@
     const GLOW_LERP = 0.2;
     const GLOW_SIZE = 120;
 
+    // Subtle illumination on foreground surfaces.
+    const SURFACE_GLOW = {
+        core: 14,
+        middle: 7,
+        edge: 2.5,
+    };
+
+    const SURFACE_CLASS = "ambient-gradient-surface";
+
+    const BACKGROUND_PROPERTIES = [
+        ["--original-image", "background-image"],
+        ["--original-repeat", "background-repeat"],
+        ["--original-position", "background-position"],
+        ["--original-size", "background-size"],
+        ["--original-origin", "background-origin"],
+        ["--original-clip", "background-clip"],
+        ["--original-attachment", "background-attachment"],
+        ["--original-blend", "background-blend-mode"],
+    ] as const;
+
     let ambientGlow: HTMLDivElement;
 
     onMount(() => {
-        const glowElements = new Set<HTMLElement>();
-        const autoAddedClasses = new Set<HTMLElement>();
-
-        // Configure global glow size.
         const root = document.documentElement;
-        const previousGlowSize = root.style.getPropertyValue("--glow-size");
-        const previousGlowSizePriority =
-            root.style.getPropertyPriority("--glow-size");
+
+        const surfaces = new Map<
+            HTMLElement,
+            {
+                x?: number;
+                y?: number;
+                classAdded: boolean;
+                previousVariables: Map<
+                    string,
+                    { value: string; priority: string }
+                >;
+            }
+        >();
+
+        const previousRootVariables = new Map(
+            ["--glow-size", "--mouse-x", "--mouse-y"].map((name) => [
+                name,
+                {
+                    value: root.style.getPropertyValue(name),
+                    priority: root.style.getPropertyPriority(name),
+                },
+            ]),
+        );
 
         root.style.setProperty("--glow-size", `${GLOW_SIZE}px`);
 
-        // Mount outside the application layout.
+        root.style.setProperty(
+            "--surface-glow-core",
+            `${SURFACE_GLOW.core}%`,
+        );
+
+        root.style.setProperty(
+            "--surface-glow-middle",
+            `${SURFACE_GLOW.middle}%`,
+        );
+
+        root.style.setProperty(
+            "--surface-glow-edge",
+            `${SURFACE_GLOW.edge}%`,
+        );
+
         const ambientLayer = ambientGlow;
         document.body.appendChild(ambientLayer);
 
@@ -31,47 +81,113 @@
         let hasPointer = false;
         let animationFrame = 0;
 
-        const applyGlow = () => {
-            // Register explicitly assigned glow elements.
-            document
-                .querySelectorAll<HTMLElement>(".glow")
-                .forEach((element) => {
-                    glowElements.add(element);
+        // Preserve and configure a painted surface.
+        function registerSurface(element: HTMLElement) {
+            if (
+                element === root ||
+                element === document.body &&
+                    element.classList.contains("ambient-glow") ||
+                element === ambientLayer ||
+                surfaces.has(element)
+            ) {
+                return;
+            }
+
+            const computed = getComputedStyle(element);
+
+            // Detect genuinely opaque background colors.
+            function isOpaque(color: string) {
+                if (!color || color === "transparent") {
+                    return false;
+                }
+
+                const match = color.match(
+                    /[,/]\s*([\d.]+)%?\s*\)$/,
+                );
+
+                if (!match) return true;
+
+                const alpha = Number(match[1]);
+                const isPercentage = match[0].includes("%");
+
+                return isPercentage ? alpha >= 98 : alpha >= 0.98;
+            }
+
+            const hasImage = computed.backgroundImage !== "none";
+            const hasOpaqueColor = isOpaque(computed.backgroundColor);
+
+            if (!hasImage && !hasOpaqueColor) {
+                return;
+            }
+
+            const previousVariables = new Map<
+                string,
+                { value: string; priority: string }
+            >();
+
+            BACKGROUND_PROPERTIES.forEach(([variable, property]) => {
+                previousVariables.set(variable, {
+                    value: element.style.getPropertyValue(variable),
+                    priority: element.style.getPropertyPriority(variable),
                 });
 
-            // Automatically register articles.
-            document
-                .querySelectorAll<HTMLElement>("article")
-                .forEach((element) => {
-                    if (!element.classList.contains("glow")) {
-                        element.classList.add("glow");
-                        autoAddedClasses.add(element);
-                    }
+                element.style.setProperty(
+                    variable,
+                    computed.getPropertyValue(property),
+                );
+            });
 
-                    glowElements.add(element);
-                });
-        };
+            const classAdded = !element.classList.contains(SURFACE_CLASS);
 
-        const observer = new MutationObserver(applyGlow);
+            if (classAdded) {
+                element.classList.add(SURFACE_CLASS);
+            }
+
+            surfaces.set(element, {
+                classAdded,
+                previousVariables,
+            });
+        }
+
+        // Automatically discover painted surfaces.
+        function scan(node: Node) {
+            if (!(node instanceof Element)) return;
+
+            if (node instanceof HTMLElement) {
+                registerSurface(node);
+            }
+
+            node.querySelectorAll("*").forEach((element) => {
+                if (element instanceof HTMLElement) {
+                    registerSurface(element);
+                }
+            });
+        }
+
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.type === "childList") {
+                    mutation.addedNodes.forEach(scan);
+                }
+            });
+        });
 
         observer.observe(document.body, {
             childList: true,
             subtree: true,
-            attributes: true,
-            attributeFilter: ["class"],
         });
 
-        applyGlow();
+        scan(document.body);
 
         function update() {
             let moving = false;
 
-            // Viewport-wide ambient glow.
+            // Viewport-wide ambient gradient.
             ambientX += (pointerX - ambientX) * GLOW_LERP;
             ambientY += (pointerY - ambientY) * GLOW_LERP;
 
-            ambientLayer.style.setProperty("--mouse-x", `${ambientX}px`);
-            ambientLayer.style.setProperty("--mouse-y", `${ambientY}px`);
+            root.style.setProperty("--mouse-x", `${ambientX}px`);
+            root.style.setProperty("--mouse-y", `${ambientY}px`);
 
             if (
                 Math.abs(pointerX - ambientX) > 0.1 ||
@@ -80,32 +196,39 @@
                 moving = true;
             }
 
-            // Individual glow elements.
-            glowElements.forEach((element) => {
+            // Individual surface coordinates.
+            surfaces.forEach((surface, element) => {
                 if (!element.isConnected) {
-                    glowElements.delete(element);
+                    surfaces.delete(element);
                     return;
                 }
 
                 const rect = element.getBoundingClientRect();
 
-                // Convert viewport coordinates into element coordinates.
                 const targetX = pointerX - rect.left;
                 const targetY = pointerY - rect.top;
 
-                const currentX = Number(element.dataset.glowX ?? targetX);
-                const currentY = Number(element.dataset.glowY ?? targetY);
+                const currentX = surface.x ?? targetX;
+                const currentY = surface.y ?? targetY;
 
                 const nextX =
                     currentX + (targetX - currentX) * GLOW_LERP;
+
                 const nextY =
                     currentY + (targetY - currentY) * GLOW_LERP;
 
-                element.dataset.glowX = String(nextX);
-                element.dataset.glowY = String(nextY);
+                surface.x = nextX;
+                surface.y = nextY;
 
-                element.style.setProperty("--mouse-x", `${nextX}px`);
-                element.style.setProperty("--mouse-y", `${nextY}px`);
+                element.style.setProperty(
+                    "--surface-x",
+                    `${nextX}px`,
+                );
+
+                element.style.setProperty(
+                    "--surface-y",
+                    `${nextY}px`,
+                );
 
                 if (
                     Math.abs(targetX - nextX) > 0.1 ||
@@ -115,14 +238,11 @@
                 }
             });
 
-            if (moving) {
-                animationFrame = requestAnimationFrame(update);
-            } else {
-                animationFrame = 0;
-            }
+            animationFrame = moving
+                ? requestAnimationFrame(update)
+                : 0;
         }
 
-        // Schedule an animation frame if one isn't already running.
         function scheduleUpdate() {
             if (!animationFrame) {
                 animationFrame = requestAnimationFrame(update);
@@ -142,25 +262,19 @@
             scheduleUpdate();
         }
 
-        // Recalculate element positions when scrolling.
         function handleScroll() {
-            if (hasPointer) {
-                scheduleUpdate();
-            }
+            if (hasPointer) scheduleUpdate();
         }
 
-        // Listen for pointer movement.
         document.addEventListener("pointermove", handlePointerMove, {
             passive: true,
         });
 
-        // Capture scroll events, including nested scroll containers.
         document.addEventListener("scroll", handleScroll, {
             passive: true,
             capture: true,
         });
 
-        // Recalculate positions when the viewport changes.
         window.addEventListener("resize", handleScroll, {
             passive: true,
         });
@@ -174,38 +288,48 @@
 
             cancelAnimationFrame(animationFrame);
 
-            // Clean up individual glow elements.
-            glowElements.forEach((element) => {
-                element.style.removeProperty("--mouse-x");
-                element.style.removeProperty("--mouse-y");
+            surfaces.forEach((surface, element) => {
+                if (surface.classAdded) {
+                    element.classList.remove(SURFACE_CLASS);
+                }
 
-                delete element.dataset.glowX;
-                delete element.dataset.glowY;
+                surface.previousVariables.forEach(
+                    ({ value, priority }, variable) => {
+                        if (value) {
+                            element.style.setProperty(
+                                variable,
+                                value,
+                                priority,
+                            );
+                        } else {
+                            element.style.removeProperty(variable);
+                        }
+                    },
+                );
+
+                element.style.removeProperty("--surface-x");
+                element.style.removeProperty("--surface-y");
             });
 
-            // Remove automatically assigned classes.
-            autoAddedClasses.forEach((element) => {
-                element.classList.remove("glow");
-            });
-
-            // Remove the portal element.
             ambientLayer.remove();
 
-            // Restore the previous global glow size.
-            if (previousGlowSize) {
-                root.style.setProperty(
-                    "--glow-size",
-                    previousGlowSize,
-                    previousGlowSizePriority,
-                );
-            } else {
-                root.style.removeProperty("--glow-size");
-            }
+            previousRootVariables.forEach(
+                ({ value, priority }, name) => {
+                    if (value) {
+                        root.style.setProperty(name, value, priority);
+                    } else {
+                        root.style.removeProperty(name);
+                    }
+                },
+            );
+
+            root.style.removeProperty("--surface-glow-core");
+            root.style.removeProperty("--surface-glow-middle");
+            root.style.removeProperty("--surface-glow-edge");
         };
     });
 </script>
 
-<!-- Viewport-wide ambient glow -->
 <div class="ambient-glow" bind:this={ambientGlow} aria-hidden="true"></div>
 
 <style>
@@ -213,7 +337,10 @@
         --ambient-hue: 150deg;
     }
 
-    /* Viewport-wide complementary ambient glow. */
+    /* =========================================
+       VIEWPORT AMBIENT GRADIENT
+       ========================================= */
+
     :global(.ambient-glow) {
         position: fixed;
         inset: 0;
@@ -225,8 +352,9 @@
         filter: hue-rotate(var(--ambient-hue));
 
         background: radial-gradient(
-            circle var(--glow-size, 120px) at var(--mouse-x, -1000px)
-                var(--mouse-y, -1000px),
+            circle var(--glow-size, 120px) at
+                var(--mouse-x, -1000px) var(--mouse-y, -1000px),
+
             color-mix(in srgb, var(--pico-primary, #3b82f6) 38%, transparent) 0%,
             color-mix(in srgb, var(--pico-primary, #3b82f6) 20%, transparent) 30%,
             color-mix(in srgb, var(--pico-primary, #3b82f6) 7%, transparent) 65%,
@@ -234,56 +362,67 @@
         );
     }
 
-    /* Individual glow elements. */
-    :global(.glow) {
-        --glow-color: var(--pico-primary, #3b82f6);
-        --glow-color-strong: var(--pico-primary-focus, #2563eb);
+    /* =========================================
+       AUTOMATIC FOREGROUND SURFACES
+       ========================================= */
 
-        position: relative;
-        isolation: isolate;
-    }
+    :global(.ambient-gradient-surface) {
+        background-image:
+            radial-gradient(
+                circle var(--glow-size, 120px) at
+                    var(--surface-x, -1000px) var(--surface-y, -1000px),
 
-    :global(.glow::before),
-    :global(.glow::after) {
-        z-index: -1;
-        content: "";
-        position: absolute;
-        inset: 0;
+                color-mix(
+                    in srgb,
+                    var(--pico-primary, #3b82f6)
+                        var(--surface-glow-core, 14%),
+                    transparent
+                ) 0%,
 
-        pointer-events: none;
-        border-radius: inherit;
-    }
+                color-mix(
+                    in srgb,
+                    var(--pico-primary, #3b82f6)
+                        var(--surface-glow-middle, 7%),
+                    transparent
+                ) 30%,
 
-    /* Ambient surface illumination. */
-    :global(.glow::before) {
-        background: radial-gradient(
-            circle var(--glow-size, 120px) at var(--mouse-x, -1000px)
-                var(--mouse-y, -1000px),
-            color-mix(in srgb, var(--glow-color) 18%, transparent) 0%,
-            color-mix(in srgb, var(--glow-color) 10%, transparent) 30%,
-            color-mix(in srgb, var(--glow-color) 4%, transparent) 65%,
-            transparent 100%
-        );
-    }
+                color-mix(
+                    in srgb,
+                    var(--pico-primary, #3b82f6)
+                        var(--surface-glow-edge, 2.5%),
+                    transparent
+                ) 65%,
 
-    /* Border illumination. */
-    :global(.glow::after) {
-        padding: 2px;
+                transparent 100%
+            ),
+            var(--original-image, none);
 
-        background: radial-gradient(
-            circle var(--glow-size, 120px) at var(--mouse-x, -1000px)
-                var(--mouse-y, -1000px),
-            color-mix(in srgb, var(--glow-color-strong) 85%, transparent) 0%,
-            color-mix(in srgb, var(--glow-color) 55%, transparent) 25%,
-            color-mix(in srgb, var(--glow-color) 15%, transparent) 60%,
-            transparent 100%
-        );
+        background-repeat:
+            no-repeat,
+            var(--original-repeat, repeat);
 
-        -webkit-mask:
-            linear-gradient(#fff 0 0) content-box,
-            linear-gradient(#fff 0 0);
+        background-position:
+            0 0,
+            var(--original-position, 0% 0%);
 
-        -webkit-mask-composite: xor;
-        mask-composite: exclude;
+        background-size:
+            100% 100%,
+            var(--original-size, auto);
+
+        background-origin:
+            border-box,
+            var(--original-origin, padding-box);
+
+        background-clip:
+            border-box,
+            var(--original-clip, border-box);
+
+        background-attachment:
+            scroll,
+            var(--original-attachment, scroll);
+
+        background-blend-mode:
+            normal,
+            var(--original-blend, normal);
     }
 </style>
