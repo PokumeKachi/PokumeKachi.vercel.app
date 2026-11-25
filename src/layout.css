@@ -29,6 +29,10 @@
 :root {
     color-scheme: light dark;
 
+    /* Blades/Pico define --pico-border-color only on controls, not on :root.
+       Without a page-level value every border using it resolves to nothing. */
+    --pico-border-color: var(--pico-muted-border-color);
+
     /* Mirrored here as fallbacks; canonical values come from
        $lib/design-language/theme.ts via the root layout. */
     --ui-radius: 0.75rem;
@@ -46,11 +50,10 @@
         0 16px 38px -18px rgb(0 0 0 / 75%)
     );
 
-    /* Inversion wash: a low-strength, steadily held difference tint in Pico's
-       own accent. The primary keeps the negative chromatic so it still pops,
-       while the gentler strength keeps it easy on the eyes. Mirrored from
-       $lib/design-language/theme.ts, like the rest of the --ui-* variables. */
-    --ui-invert-strength: 10%;
+    /* Inversion wash: a pronounced, steadily held difference tint in Pico's
+       own accent. Mirrored from $lib/design-language/theme.ts, like the rest
+       of the --ui-* variables. */
+    --ui-invert-strength: 18%;
     --ui-invert-color: var(--pico-primary);
 
     --theme-filter: brightness(0) saturate(100%) invert(26%) sepia(91%)
@@ -85,6 +88,28 @@ body::before {
             color-mix(in oklab, var(--pico-primary) var(--ui-glow-alt, 9%), transparent),
             transparent 70%
         );
+}
+
+/* One continuous gesture from the top of the page to the bottom: the ambient
+   glow drifts, breathes and turns hue as you scroll, so the hand-off between
+   sections never feels like a set of disconnected stops. */
+@supports (animation-timeline: scroll()) {
+    body::before {
+        animation: glow-drift linear both;
+        animation-timeline: scroll(root block);
+        animation-range: 0 100%;
+    }
+
+    @keyframes glow-drift {
+        from {
+            transform: translate3d(0, 0, 0) scale(1);
+            filter: hue-rotate(0deg);
+        }
+        to {
+            transform: translate3d(0, -14%, 0) scale(1.18);
+            filter: hue-rotate(38deg);
+        }
+    }
 }
 
 html::-webkit-scrollbar {
@@ -312,16 +337,19 @@ li:focus-within img {
     }
 }
 
-/* The inversion wash: one full-viewport difference layer tinted with Pico's
-   own primary. It eases in once, early, and then holds at a deliberately low
-   strength (--ui-invert-strength) all the way to the end of the page. A single
-   slow ramp instead of an on/off beat avoids the flash that strains the eye. */
+/* The inversion wash: a chromatic vignette, not a flat overlay. The center
+   stays untouched so copy keeps its contrast, while the edges pick up Pico's
+   accent in difference mode. It ramps in once and holds to the page's end. */
 .invert-beat {
     position: fixed;
     inset: 0;
     z-index: 9998;
     pointer-events: none;
-    background: var(--ui-invert-color, var(--pico-primary));
+    background: radial-gradient(
+        125% 115% at 50% 45%,
+        transparent 34%,
+        var(--ui-invert-color, var(--pico-primary)) 100%
+    );
     mix-blend-mode: difference;
     opacity: 0;
 }
@@ -338,9 +366,9 @@ li:focus-within img {
             opacity: 0;
         }
         /* Hold from here to 100% so the wash persists to the page's end. */
-        24%,
+        18%,
         100% {
-            opacity: var(--ui-invert-strength, 10%);
+            opacity: var(--ui-invert-strength, 18%);
         }
     }
 }

@@ -32,7 +32,7 @@
 
             const scene = new THREE.Scene();
             const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 100);
-            camera.position.z = 9;
+            camera.position.z = 13;
 
             const root = new THREE.Group();
             scene.add(root);
@@ -106,8 +106,17 @@
                 root.rotation.x = p * Math.PI * 0.9 + easedY * SCENE.pointer * 0.6;
                 root.rotation.z = p * Math.PI * 0.35 - easedX * 0.2;
                 root.position.y = (0.5 - p) * SCENE.swing;
-                root.scale.setScalar(1 + p * 0.25);
+                root.scale.setScalar(0.72 + p * 0.1);
                 points.rotation.y = -p * Math.PI * 2;
+
+                /* Present in the hero, then recede so the reading columns
+                   are never buried under wireframe. */
+                const heroFade = Math.max(
+                    0,
+                    1 - window.scrollY / (window.innerHeight * 1.1),
+                );
+                host.style.opacity = String(0.28 + heroFade * 0.57);
+
                 renderer.render(scene, camera);
             };
 

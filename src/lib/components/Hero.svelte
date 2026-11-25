@@ -90,6 +90,51 @@
             animation-timeline: scroll(root block);
             animation-range: 0 70vh;
         }
+
+        /* Each line leaves at its own pace along the Y axis as the hero
+           scrolls away. `translate` is independent of the entrance
+           `transform`, so the two gestures compose instead of fighting. */
+        .content > * {
+            --strip: -1rem;
+            animation:
+                rise var(--ui-entrance, 700ms) var(--ui-ease) both,
+                hero-y linear both;
+            animation-timeline: auto, scroll(root block);
+            animation-range: normal, 0 60vh;
+        }
+
+        .content > :nth-child(1) {
+            --strip: -0.75rem;
+            animation-range: normal, 0 30vh;
+            animation-delay: 0ms, 0ms;
+        }
+
+        .content > :nth-child(2) {
+            --strip: -2rem;
+            animation-range: normal, 0 45vh;
+            animation-delay: 80ms, 0ms;
+        }
+
+        .content > :nth-child(3) {
+            --strip: -1.25rem;
+            animation-range: normal, 0 55vh;
+            animation-delay: 160ms, 0ms;
+        }
+
+        .content > :nth-child(4) {
+            --strip: -1.75rem;
+            animation-range: normal, 0 65vh;
+            animation-delay: 240ms, 0ms;
+        }
+
+        @keyframes hero-y {
+            from {
+                translate: 0 0;
+            }
+            to {
+                translate: 0 var(--strip, -1rem);
+            }
+        }
     }
 
     @keyframes hero-motion {
