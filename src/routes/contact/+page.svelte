@@ -18,15 +18,8 @@
     ] as const;
 </script>
 
-<svelte:head>
-    <title>Contact — Pokume Kachi</title>
-</svelte:head>
-
 <header>
-    <hgroup>
-        <h1>Contact</h1>
-        <p>Find me online.</p>
-    </hgroup>
+    <h1>Contact.</h1>
 </header>
 
 <section aria-label="Social links">

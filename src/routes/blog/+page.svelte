@@ -17,16 +17,8 @@
     }
 </script>
 
-<svelte:head>
-    <title>Blog — Pokume Kachi</title>
-</svelte:head>
-
 <header>
-    <p><small>Writing &amp; notes</small></p>
-    <hgroup>
-        <h1>Blog</h1>
-        <p>Thoughts, projects, and things I've learned.</p>
-    </hgroup>
+    <h1>Thoughts.</h1>
 </header>
 
 {#if data.posts.length === 0}
@@ -34,26 +26,21 @@
 {:else}
     <section aria-label="Blog posts">
         {#each data.posts as post (post.slug)}
-            <article>
-                <header>
-                    <h2>{post.title}</h2>
+            <a href={`/blog/${post.slug}`}>
+                <article>
                     <p>
-                        {#if post.date}
-                            <small>
-                                <time datetime={post.date}>
-                                    {formatDate(post.date)}
-                                </time>
-                            </small>
-                        {/if}
                         {#if post.description}
-                            {post.date ? "—" : ""}
                             {post.description}
                         {/if}
+                        {#if post.date}
+                            {post.description ? "-" : ""}
+                            <time datetime={post.date}>
+                                {formatDate(post.date)}
+                            </time>
+                        {/if}
                     </p>
-                </header>
-
-                {@html post.html}
-            </article>
+                </article>
+            </a>
         {/each}
     </section>
 {/if}
