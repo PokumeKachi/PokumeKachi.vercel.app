@@ -34,9 +34,3 @@
         </ul>
     </nav>
 </header>
-
-<style>
-    header {
-        background-color: var(--pico-background-color);
-    }
-</style>
