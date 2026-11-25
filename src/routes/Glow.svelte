@@ -2,20 +2,31 @@
     import { onMount } from "svelte";
 
     onMount(() => {
-        const articles = new Set<HTMLElement>();
+        const glowElements = new Set<HTMLElement>();
+        const autoAddedClasses = new Set<HTMLElement>();
 
         let pointerX = 0;
         let pointerY = 0;
         let animationFrame = 0;
 
+        // Register every element that already has the glow class.
         const applyGlow = () => {
+            document
+                .querySelectorAll<HTMLElement>(".glow")
+                .forEach((element) => {
+                    glowElements.add(element);
+                });
+
+            // Automatically register articles as glow elements.
             document
                 .querySelectorAll<HTMLElement>("article")
                 .forEach((element) => {
-                    if (articles.has(element)) return;
+                    if (!element.classList.contains("glow")) {
+                        element.classList.add("glow");
+                        autoAddedClasses.add(element);
+                    }
 
-                    articles.add(element);
-                    element.classList.add("glow");
+                    glowElements.add(element);
                 });
         };
 
@@ -31,9 +42,9 @@
         function update() {
             let moving = false;
 
-            articles.forEach((element) => {
+            glowElements.forEach((element) => {
                 if (!element.isConnected) {
-                    articles.delete(element);
+                    glowElements.delete(element);
                     return;
                 }
 
@@ -85,19 +96,24 @@
             document.removeEventListener("pointermove", handlePointerMove);
             cancelAnimationFrame(animationFrame);
 
-            articles.forEach((element) => {
-                element.classList.remove("glow");
+            glowElements.forEach((element) => {
                 element.style.removeProperty("--mouse-x");
                 element.style.removeProperty("--mouse-y");
+
                 delete element.dataset.glowX;
                 delete element.dataset.glowY;
+            });
+
+            // Only remove classes that this component added.
+            autoAddedClasses.forEach((element) => {
+                element.classList.remove("glow");
             });
         };
     });
 </script>
 
 <style>
-    :global(article.glow) {
+    :global(.glow) {
         --glow-size: 180px;
         --glow-color: var(--pico-primary);
         --glow-color-strong: var(--pico-primary-focus);
@@ -106,8 +122,8 @@
         isolation: isolate;
     }
 
-    :global(article.glow::before),
-    :global(article.glow::after) {
+    :global(.glow::before),
+    :global(.glow::after) {
         z-index: -1;
         content: "";
         position: absolute;
@@ -116,7 +132,7 @@
         border-radius: inherit;
     }
 
-    :global(article.glow::before) {
+    :global(.glow::before) {
         background: radial-gradient(
             circle var(--glow-size) at var(--mouse-x, -1000px)
                 var(--mouse-y, -1000px),
@@ -127,7 +143,7 @@
         );
     }
 
-    :global(article.glow::after) {
+    :global(.glow::after) {
         padding: 2px;
 
         background: radial-gradient(

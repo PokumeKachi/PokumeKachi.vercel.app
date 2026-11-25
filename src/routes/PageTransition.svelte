@@ -38,6 +38,14 @@
         view-transition-name: route-content;
     }
 
+    :global(::view-transition),
+    :global(::view-transition-group(route-content)),
+    :global(::view-transition-image-pair(route-content)),
+    :global(::view-transition-old(route-content)),
+    :global(::view-transition-new(route-content)) {
+        pointer-events: none;
+    }
+
     :global(::view-transition-group(route-content)) {
         animation-duration: 900ms;
         animation-timing-function: ease-in-out;
