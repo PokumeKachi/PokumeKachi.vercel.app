@@ -5,7 +5,7 @@ import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 const A4 = [595.28, 841.89] as const;
 const MARGIN = 48;
 
-async function renderCv(): Promise<Uint8Array> {
+async function renderResume(): Promise<Uint8Array> {
     const doc = await PDFDocument.create();
     const page = doc.addPage([...A4]);
     const bold = await doc.embedFont(StandardFonts.HelveticaBold);
@@ -52,7 +52,7 @@ async function renderCv(): Promise<Uint8Array> {
 async function generateResume() {
     const out = resolve("static/resume.pdf");
     await mkdir(dirname(out), { recursive: true });
-    await writeFile(out, await renderCv());
+    await writeFile(out, await renderResume());
     console.log(`wrote ${out}`);
 }
 
