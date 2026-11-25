@@ -1,6 +1,4 @@
 <script lang="ts">
-    import ScrollLock from "$lib/behaviors/ScrollLock.svelte";
-
     const links = [
         {
             name: "GitHub",
@@ -20,40 +18,26 @@
     ] as const;
 </script>
 
-<ScrollLock />
+<svelte:head>
+    <title>Contact — Pokume Kachi</title>
+</svelte:head>
 
-<main class="container">
-    <ul>
-        {#each links as { name, icon, url }}
-            <li>
-                <img class="themed-image" src={icon} alt={name} />
-                <a href={url} aria-label={`Visit ${name}`}></a>
-            </li>
-        {/each}
-    </ul>
+<main>
+    <header>
+        <h1>Contact</h1>
+        <p>Find me online.</p>
+    </header>
+
+    <section aria-label="Social links">
+        <ul class="socials">
+            {#each links as { name, icon, url }}
+                <li>
+                    <a href={url}>
+                        <img class="themed-image" src={icon} alt="" />
+                        <span>{name}</span>
+                    </a>
+                </li>
+            {/each}
+        </ul>
+    </section>
 </main>
-
-<style>
-    ul {
-        display: flex;
-        justify-content: center;
-        gap: 1rem;
-        padding: 0;
-    }
-
-    li {
-        position: relative;
-        width: 5rem;
-        height: 5rem;
-        padding: 0;
-    }
-
-    a {
-        position: absolute;
-        inset: 0;
-    }
-
-    img {
-        width: 5rem;
-    }
-</style>
