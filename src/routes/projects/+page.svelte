@@ -6,20 +6,24 @@
     <title>Projects — Pokume Kachi</title>
 </svelte:head>
 
-<main>
-    <header>
+<header>
+    <hgroup>
         <h1>Projects</h1>
         <p>Things I've built.</p>
-    </header>
+    </hgroup>
+</header>
 
-    <section aria-label="Project list">
-        <ul>
-            {#each projects as project (project.slug)}
-                <li>
-                    <a href={`/projects/${project.slug}`}>{project.name}</a>
-                    — {project.title}
-                </li>
-            {/each}
-        </ul>
-    </section>
-</main>
+<section aria-label="Project list">
+    {#each projects as project (project.slug)}
+        <a href={`/projects/${project.slug}`}>
+            <article>
+                <header>
+                    <h2>
+                        {project.name}
+                    </h2>
+                </header>
+                <p>{project.title}</p>
+            </article>
+        </a>
+    {/each}
+</section>

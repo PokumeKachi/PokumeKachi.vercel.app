@@ -22,22 +22,21 @@
     <title>Contact — Pokume Kachi</title>
 </svelte:head>
 
-<main>
-    <header>
+<header>
+    <hgroup>
         <h1>Contact</h1>
         <p>Find me online.</p>
-    </header>
+    </hgroup>
+</header>
 
-    <section aria-label="Social links">
-        <ul class="socials">
-            {#each links as { name, icon, url }}
-                <li>
-                    <a href={url}>
-                        <img class="themed-image" src={icon} alt="" />
-                        <span>{name}</span>
-                    </a>
-                </li>
-            {/each}
-        </ul>
-    </section>
-</main>
+<section aria-label="Social links">
+    <div class="grid">
+        {#each links as { name, icon, url }}
+            <a href={url}>
+                <article>
+                    <strong>{name}</strong>
+                </article>
+            </a>
+        {/each}
+    </div>
+</section>

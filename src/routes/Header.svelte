@@ -3,11 +3,18 @@
     import { HEADER_LINKS } from "$lib/content/sitemap";
 </script>
 
-<header class="container">
+<header class="container glow">
     <nav aria-label="Primary">
-        <h2><a class="brand" href="/">Pokume Kachi</a></h2>
-
         <ul>
+            <li>
+                <a
+                    href="/"
+                    aria-current={page.url.pathname === "/" ? "page" : undefined}
+                >
+                    <strong>Pokume Kachi</strong>
+                </a>
+            </li>
+
             {#each HEADER_LINKS.slice(1) as [label, href]}
                 <li>
                     <a
@@ -25,9 +32,3 @@
         </ul>
     </nav>
 </header>
-
-<style>
-    [aria-current="page"] {
-        text-decoration: underline;
-    }
-</style>

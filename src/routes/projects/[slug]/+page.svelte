@@ -6,4 +6,12 @@
     let { data }: PageProps = $props();
 </script>
 
-<DeviceFrame url={data.project.url} />
+<svelte:head>
+    <title>{data.project.name} — Pokume Kachi</title>
+</svelte:head>
+
+<DeviceFrame
+    url={data.project.url}
+    title={data.project.name}
+    description={data.project.title}
+/>

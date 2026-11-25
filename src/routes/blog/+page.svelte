@@ -21,38 +21,39 @@
     <title>Blog — Pokume Kachi</title>
 </svelte:head>
 
-<main>
-    <header>
-        <p class="eyebrow">Writing &amp; notes</p>
+<header>
+    <p><small>Writing &amp; notes</small></p>
+    <hgroup>
         <h1>Blog</h1>
         <p>Thoughts, projects, and things I've learned.</p>
-    </header>
+    </hgroup>
+</header>
 
-    {#if data.posts.length === 0}
-        <p>No posts yet.</p>
-    {:else}
-        <section class="posts" aria-label="Blog posts">
-            {#each data.posts as post (post.slug)}
-                <article class="post">
-                    <header>
+{#if data.posts.length === 0}
+    <p>No posts yet.</p>
+{:else}
+    <section aria-label="Blog posts">
+        {#each data.posts as post (post.slug)}
+            <article>
+                <header>
+                    <h2>{post.title}</h2>
+                    <p>
                         {#if post.date}
-                            <time datetime={post.date}>
-                                {formatDate(post.date)}
-                            </time>
+                            <small>
+                                <time datetime={post.date}>
+                                    {formatDate(post.date)}
+                                </time>
+                            </small>
                         {/if}
-
-                        <h2>{post.title}</h2>
-
                         {#if post.description}
-                            <p>{post.description}</p>
+                            {post.date ? "—" : ""}
+                            {post.description}
                         {/if}
-                    </header>
+                    </p>
+                </header>
 
-                    <div class="markdown-content">
-                        {@html post.html}
-                    </div>
-                </article>
-            {/each}
-        </section>
-    {/if}
-</main>
+                {@html post.html}
+            </article>
+        {/each}
+    </section>
+{/if}
