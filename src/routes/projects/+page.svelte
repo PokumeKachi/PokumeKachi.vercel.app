@@ -2,14 +2,9 @@
     import { projects } from "$lib/content/projects";
 </script>
 
-<svelte:head>
-    <title>Projects — Pokume Kachi</title>
-</svelte:head>
-
 <header>
     <hgroup>
-        <h1>Projects</h1>
-        <p>Things I've built.</p>
+        <h1>Things I've built.</h1>
     </hgroup>
 </header>
 
