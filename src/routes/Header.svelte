@@ -6,18 +6,7 @@
 <header class="container">
     <nav aria-label="Primary">
         <ul>
-            <li>
-                <a
-                    href="/"
-                    aria-current={page.url.pathname === "/"
-                        ? "page"
-                        : undefined}
-                >
-                    <strong>Pokume Kachi</strong>
-                </a>
-            </li>
-
-            {#each HEADER_LINKS.slice(1) as [label, href]}
+            {#each HEADER_LINKS.slice(0) as [label, href]}
                 <li>
                     <a
                         {href}
@@ -27,7 +16,11 @@
                             ? "page"
                             : undefined}
                     >
-                        {label}
+                        {#if href == page.url.pathname}
+                            <strong>{label}</strong>
+                        {:else}
+                            {label}
+                        {/if}
                     </a>
                 </li>
             {/each}
