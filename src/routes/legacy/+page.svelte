@@ -33,10 +33,6 @@
     ];
 </script>
 
-<svelte:head>
-    <title>Legacy — Pokume Kachi</title>
-</svelte:head>
-
 <header>
     <hgroup>
         <h1>Legacy</h1>
