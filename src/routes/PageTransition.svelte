@@ -6,35 +6,37 @@
     let pageContent: HTMLDivElement;
 
     onNavigate((navigation) => {
-        if (navigation.from?.url.href === navigation.to?.url.href) {
-            return;
-        }
-
-        const startViewTransition =
-            pageContent?.startViewTransition?.bind(pageContent) ??
-            document.startViewTransition?.bind(document);
-
         if (
-            !startViewTransition ||
-            window.matchMedia("(prefers-reduced-motion: reduce)").matches
+            !pageContent ||
+            window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+            !document.startViewTransition ||
+            navigation.from?.url.href === navigation.to?.url.href
         ) {
             return;
         }
 
         const direction =
             navigation.type === "popstate" &&
-            navigation.delta !== undefined &&
-            navigation.delta < 0
+            (navigation.delta ?? 0) < 0
                 ? "back"
                 : "forward";
 
         document.documentElement.dataset.navigationDirection = direction;
 
         return new Promise<void>((resolve) => {
-            startViewTransition(async () => {
+            const transition = document.startViewTransition(async () => {
                 resolve();
                 await navigation.complete;
             });
+
+            transition.finished.then(
+                () => {
+                    delete document.documentElement.dataset.navigationDirection;
+                },
+                () => {
+                    delete document.documentElement.dataset.navigationDirection;
+                },
+            );
         });
     });
 </script>
@@ -42,9 +44,8 @@
 <svelte:head>
     <style>
         :root {
-            --route-duration: 420ms;
-            --route-easing: cubic-bezier(0.22, 1, 0.36, 1);
-            --route-exit-duration: 180ms;
+            --route-transition: var(--pico-transition, 0.2s ease-in-out);
+            --route-exit-transition: var(--pico-transition, 0.2s ease-in-out);
 
             view-transition-name: none;
         }
@@ -68,8 +69,7 @@
         }
 
         ::view-transition-group(route-content) {
-            animation-duration: var(--route-duration);
-            animation-timing-function: var(--route-easing);
+            animation: var(--route-transition);
         }
 
         ::view-transition-image-pair(route-content) {
@@ -77,40 +77,24 @@
         }
 
         ::view-transition-old(route-content) {
-            animation: route-exit var(--route-exit-duration)
-                cubic-bezier(0.4, 0, 1, 1) both;
-
-            backface-visibility: hidden;
+            animation: route-exit var(--route-exit-transition) both;
         }
 
         ::view-transition-new(route-content) {
-            animation: route-enter var(--route-duration) var(--route-easing)
-                both;
-
-            backface-visibility: hidden;
+            animation: route-enter var(--route-transition) both;
         }
 
         @keyframes route-exit {
-            from {
-                opacity: 1;
-                transform: translate3d(0, 0, 0) scale(1);
-            }
-
             to {
                 opacity: 0;
-                transform: translate3d(0, -8px, 0) scale(0.995);
+                transform: translateY(-8px) scale(0.995);
             }
         }
 
         @keyframes route-enter {
             from {
                 opacity: 0;
-                transform: translate3d(0, 12px, 0) scale(0.995);
-            }
-
-            to {
-                opacity: 1;
-                transform: translate3d(0, 0, 0) scale(1);
+                transform: translateY(12px) scale(0.995);
             }
         }
 
@@ -125,26 +109,16 @@
         }
 
         @keyframes route-exit-back {
-            from {
-                opacity: 1;
-                transform: translate3d(0, 0, 0) scale(1);
-            }
-
             to {
                 opacity: 0;
-                transform: translate3d(0, 8px, 0) scale(0.995);
+                transform: translateY(8px) scale(0.995);
             }
         }
 
         @keyframes route-enter-back {
             from {
                 opacity: 0;
-                transform: translate3d(0, -12px, 0) scale(0.995);
-            }
-
-            to {
-                opacity: 1;
-                transform: translate3d(0, 0, 0) scale(1);
+                transform: translateY(-12px) scale(0.995);
             }
         }
 
