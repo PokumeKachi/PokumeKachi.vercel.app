@@ -27,17 +27,18 @@ export const POST: RequestHandler = async ({ request }) => {
             messages: [
                 {
                     role: "system",
-                    content: "You are a grader, grade the user's essay.",
+                    content:
+                        "You are an IELTS writing grader, grade the user's essay. If the user's input is invalid (rude language, weird wording, nonsensical input), say 'Please provide a valid input.'",
                 },
                 {
                     role: "user",
-                    content: `This is my essay:\n\n${body.essay}`,
+                    content: `This is the problem statement:\n${body.problemStatement}\nThis is my essay:\n${body.essay}`,
                 },
             ],
-            temperature: 1,
+            temperature: 0,
             max_completion_tokens: 2048,
             top_p: 1,
-            reasoning_effort: "medium",
+            reasoning_effort: "low",
         });
 
         return json({

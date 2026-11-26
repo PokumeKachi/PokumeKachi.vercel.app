@@ -1,6 +1,7 @@
 <script lang="ts">
     import { marked } from "marked";
 
+    let problemStatement = $state("");
     let essay = $state("");
     let feedbackHtml = $state("");
     let loading = $state(false);
@@ -22,6 +23,7 @@
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
+                    problemStatement: problemStatement.trim(),
                     essay: essay.trim(),
                 }),
             });
@@ -58,6 +60,17 @@
             loading = false;
         }
     }
+
+    function handleEssayKeydown(event: KeyboardEvent) {
+        if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) {
+            event.preventDefault();
+
+            if (!loading && essay.trim()) {
+                event.currentTarget instanceof HTMLTextAreaElement &&
+                    event.currentTarget.form?.requestSubmit();
+            }
+        }
+    }
 </script>
 
 <main class="container">
@@ -70,16 +83,38 @@
 
     <form onsubmit={checkEssay}>
         <fieldset>
+            <label for="problem-statement">
+                IELTS problem statement
+                <small>(Optional)</small>
+            </label>
+
+            <textarea
+                id="problem-statement"
+                name="problemStatement"
+                bind:value={problemStatement}
+                onkeydown={handleEssayKeydown}
+                placeholder="Paste the IELTS Writing Task 1 or Task 2 question here..."
+                required
+                disabled={loading}></textarea>
+
+            <small>{problemStatement.length} characters</small>
+        </fieldset>
+
+        <fieldset>
             <label for="essay">Your essay</label>
+
             <textarea
                 id="essay"
                 name="essay"
                 bind:value={essay}
+                onkeydown={handleEssayKeydown}
                 placeholder="Paste your essay here..."
-                rows="16"
                 required
                 disabled={loading}></textarea>
-            <small>{essay.length} characters</small>
+
+            <small>
+                {essay.length} characters · Ctrl/Cmd + Enter to submit
+            </small>
         </fieldset>
 
         <button
@@ -135,24 +170,9 @@
 </main>
 
 <style>
-    .markdown {
-        overflow-wrap: anywhere;
-    }
-
-    .markdown pre {
-        overflow-x: auto;
-    }
-
-    .markdown table {
-        display: block;
-        overflow-x: auto;
-    }
-
-    .markdown > :first-child {
-        margin-top: 0;
-    }
-
-    .markdown > :last-child {
-        margin-bottom: 0;
+    textarea {
+        field-sizing: content;
+        min-height: 3rem;
+        resize: vertical;
     }
 </style>
